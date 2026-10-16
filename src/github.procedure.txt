@@ -53,3 +53,39 @@ git remote -v
 git branch -vv
 
 git branch -vv should show both branches tracking origin/staging and origin/production.
+
+
+2. The 403 is the same account mismatch as before
+
+“Permission to RehaanQnopy/Attendance-kiosk.git denied to Rehaan4u.”
+
+The repo belongs to RehaanQnopy, but Git is still sending the credential for Rehaan4u. It didn’t prompt you at all, which means a saved login is still being reused. The erase command either wasn’t run or didn’t remove the entry.
+
+Fix it
+1. Erase the saved credential
+bash
+printf "protocol=https\nhost=github.com\n\n" | git credential-osxkeychain erase
+2. Confirm it’s gone from Keychain
+
+Open Keychain Access (Cmd+Space), search github.com, and delete every internet password entry you see. The command line erase sometimes misses entries, so check by hand.
+
+3. Check the remote URL
+bash
+git remote -v
+
+It should be exactly https://github.com/RehaanQnopy/Attendance-kiosk.git, with nothing before github.com. If it contains Rehaan4u@, reset it:
+
+bash
+git remote set-url origin https://github.com/RehaanQnopy/Attendance-kiosk.git
+4. Push again
+bash
+git push --set-upstream origin staging
+
+Git should now prompt you:
+
+Prompt	Enter
+Username	RehaanQnopy
+Password	A token created while logged into RehaanQnopy
+5. Then the production branch
+bash
+git push --set-upstream origin production
