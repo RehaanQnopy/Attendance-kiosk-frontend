@@ -1,0 +1,55 @@
+Switching to the new repo
+
+You don’t have to delete anything locally. A local project isn’t tied to a GitHub repo. It’s only linked through its remote URL, so “switching” means pointing the remote at the new repo.
+
+1. See what’s linked now
+bash
+git remote -v
+
+This shows the old repo’s URL (or URLs).
+
+2. Remove the old remote(s)
+
+Remove whatever names you see listed:
+
+bash
+git remote remove origin
+git remote remove staging
+git remote remove production
+
+Ignore any “No such remote” messages.
+
+3. Add the new repo
+
+Create the new repo on GitHub first (empty: no README, no .gitignore, no license), then:
+
+bash
+git remote add origin https://github.com/YOUR_USERNAME/NEW_REPO.git
+git remote -v
+
+The URL should have no username or token inside it.
+
+4. Clear the old login
+
+You were logged in for the deleted repo, and that saved credential may belong to the wrong account:
+
+bash
+printf "protocol=https\nhost=github.com\n\n" | git credential-osxkeychain erase
+5. Create the branches and push
+
+If you haven’t yet:
+
+bash
+git branch -M staging
+git branch production
+git push -u origin staging
+git push -u origin production
+
+When prompted, enter the username of the account that owns the new repo, and a token created under that same account.
+
+6. Check it worked
+bash
+git remote -v
+git branch -vv
+
+git branch -vv should show both branches tracking origin/staging and origin/production.
