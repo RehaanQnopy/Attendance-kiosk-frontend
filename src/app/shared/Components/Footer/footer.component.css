@@ -1,0 +1,51 @@
+.app-footer {
+  position: relative;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 16px 24px;
+  background: #ffffff;
+  color: #555;
+  font-size: 13px;
+  box-shadow: 0 -2px 8px rgba(0, 0, 0, 0.05);
+}
+
+/* Same flowing teal line as the header, on top of the footer */
+.app-footer::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 0;
+  height: 3px;
+  background: linear-gradient(
+    90deg,
+    var(--brand-teal),
+    var(--brand-teal-light),
+    var(--brand-teal)
+  );
+  background-size: 200% 100%;
+  animation: flow 6s linear infinite;
+}
+
+@keyframes flow {
+  from { background-position: 0% 0; }
+  to   { background-position: 200% 0; }
+}
+
+.tagline {
+  color: var(--brand-teal);
+  font-weight: 500;
+}
+
+@media (max-width: 480px) {
+  .app-footer {
+    flex-direction: column;
+    gap: 6px;
+    text-align: center;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .app-footer::before { animation: none; }
+}

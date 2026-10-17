@@ -1,0 +1,110 @@
+.app-header {
+  position: relative;
+  display: flex;
+  align-items: center;
+  height: 72px;
+  padding: 0 24px;
+  background: #ffffff;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+}
+
+.spacer { flex: 1 1 auto; }
+
+/* Logo with shine sweep */
+.logo-link {
+  position: relative;
+  display: inline-block;
+  overflow: hidden;
+  line-height: 0;
+}
+
+.logo {
+  height: 44px;
+  display: block;
+}
+
+.logo-link::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -75%;
+  width: 50%;
+  height: 100%;
+  background: linear-gradient(
+    120deg,
+    transparent 0%,
+    rgba(255, 255, 255, 0.85) 50%,
+    transparent 100%
+  );
+  transform: skewX(-20deg);
+  animation: shine 4s ease-in-out infinite;
+}
+
+@keyframes shine {
+  0%, 60% { left: -75%; }
+  100%    { left: 125%; }
+}
+
+/* Profile button */
+.profile-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 18px;
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--brand-teal);
+  background: transparent;
+  border: 1.5px solid var(--brand-teal);
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background-color 0.25s, color 0.25s, transform 0.2s, box-shadow 0.2s;
+}
+
+.profile-icon {
+  width: 20px;
+  height: 20px;
+  fill: currentColor;
+}
+
+.profile-btn:hover {
+  background: var(--brand-teal);
+  color: #ffffff;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 10px rgba(0, 131, 143, 0.3);
+}
+
+.profile-btn:active { transform: translateY(0); }
+
+.profile-btn:focus-visible {
+  outline: 2px solid var(--brand-teal-light);
+  outline-offset: 2px;
+}
+
+/* Flowing teal line under the header */
+.app-header::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 3px;
+  background: linear-gradient(
+    90deg,
+    var(--brand-teal),
+    var(--brand-teal-light),
+    var(--brand-teal)
+  );
+  background-size: 200% 100%;
+  animation: flow 6s linear infinite;
+}
+
+@keyframes flow {
+  from { background-position: 0% 0; }
+  to   { background-position: 200% 0; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .logo-link::after,
+  .app-header::after { animation: none; }
+}
