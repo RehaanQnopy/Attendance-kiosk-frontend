@@ -1,0 +1,57 @@
+<aside class="side-nav" aria-label="Main navigation">
+
+  <!-- ===== Main menu ===== -->
+  <nav class="side-nav__menu">
+
+    <button type="button" class="nav-item" (click)="Home()">
+      <span class="nav-item__icon">
+        <svg viewBox="0 0 24 24" aria-hidden="true">
+          <path d="M3 10.5 12 3l9 7.5V20a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1z"/>
+        </svg>
+      </span>
+      <span class="nav-item__label">Home</span>
+    </button>
+
+    <button type="button" class="nav-item" (click)="MyAttendance()">
+      <span class="nav-item__icon">
+        <svg viewBox="0 0 24 24" aria-hidden="true">
+          <rect x="3" y="4.5" width="18" height="16" rx="3"/>
+          <path d="M3 9.5h18M8 3v3M16 3v3M8.5 15l2.5 2.5 4.5-5"/>
+        </svg>
+      </span>
+      <span class="nav-item__label">My attendance</span>
+    </button>
+
+    <button type="button" class="nav-item" (click)="MarkLeave()">
+      <span class="nav-item__icon">
+        <svg viewBox="0 0 24 24" aria-hidden="true">
+          <path d="M14 3h5a1 1 0 0 1 1 1v16a1 1 0 0 1-1 1h-5"/>
+          <path d="M10 8l-4 4 4 4M6 12h10"/>
+        </svg>
+      </span>
+      <span class="nav-item__label">Mark leave</span>
+    </button>
+
+    <!--
+      Adding another button later? Copy one block above, change
+      the (click) handler, the label and the SVG path. That's it.
+    -->
+
+  </nav>
+
+  <!-- ===== Slot: calendar =====
+       Usage in the parent template:
+       <side-navigator>
+         <app-calendar sideNavCalendar></app-calendar>
+       </side-navigator>
+  -->
+  <div class="side-nav__slot"><ng-content select="[sideNavCalendar]"></ng-content></div>
+
+  <!-- ===== Slot: holidays ===== -->
+  <div class="side-nav__slot"><ng-content select="[sideNavHoliday]"></ng-content></div>
+
+  <!-- ===== Slot: any extra buttons or widgets =====
+       Anything without a special attribute lands here. -->
+  <div class="side-nav__slot"><ng-content></ng-content></div>
+
+</aside>

@@ -1,0 +1,23 @@
+<!-- <button (click)="onMonthChange(-1)">Prev</button> -->
+<!-- <span>{{ viewDate | date:'MMMM yyyy' }}</span> -->
+<!-- <button (click)="onMonthChange(1)">Next</button> -->
+
+<div class="calendar-wrapper">
+  <h2 class="calendar-title">{{ viewDate | date:'MMMM yyyy' }}</h2>
+
+  <mwl-calendar-month-view [viewDate]="viewDate"></mwl-calendar-month-view>
+  <!--
+    [refresh]="refresh"
+    [cellTemplate]="dayCell"
+    (beforeViewRender)="onBeforeRender($event)"
+  -->
+</div>
+
+<!-- <button (click)="onMonthChange(-1)">Prev</button> -->
+<!-- <button (click)="onMonthChange(1)">Next</button> -->
+
+<!-- <ng-template #dayCell let-day="day">
+  <div class="tile" [title]="day.meta?.tooltip || ''">
+    {{ day.date | date:'d' }}
+  </div>
+</ng-template> -->

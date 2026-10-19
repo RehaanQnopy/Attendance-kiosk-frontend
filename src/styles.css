@@ -1,4 +1,15 @@
 /* You can add global styles to this file, and also import other style files */
 
+@import "angular-calendar/css/angular-calendar.css";
+.cal-month-view .cal-day-cell.tile-full  { background-color: #c8f0c8; }
+.cal-month-view .cal-day-cell.tile-short { background-color: #ffd9a8; }
+.cal-month-view .cal-day-cell.tile-leave { background-color: #fff3a8; }
+.cal-month-view .cal-day-cell.tile-open  { background-color: #cfe8ff; }
 html, body { height: 100%; }
-body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
+
+
+body { 
+  margin: 0; 
+  font-family: Roboto, "Helvetica Neue", sans-serif; 
+  background-color: #009393 /* Adds the cyan background */
+}

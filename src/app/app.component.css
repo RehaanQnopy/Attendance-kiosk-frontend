@@ -4,4 +4,30 @@
   min-height: 100vh;
 }
 
-main { flex: 1; }
+/* Row: navigator on the left, content on the right */
+.app-body {
+  flex: 1;                    /* fills the space between header and footer */
+  display: flex;
+  align-items: flex-start;    /* navigator keeps its own height, not stretched */
+  gap: 24px;
+  padding: 24px 40px;
+}
+
+/* Navigator keeps its natural width */
+.app-nav {
+  flex: 0 0 auto;
+}
+
+/* Content takes all the remaining width */
+.app-content {
+  flex: 1;
+  min-width: 0;               /* lets wide children shrink instead of overflowing */
+  display: flex;
+  flex-direction: column;     /* each new component stacks under the previous one */
+  gap: 24px;
+}
+
+/* Custom element tags are inline by default; make every feature component a block */
+.app-content > * {
+  display: block;
+}
