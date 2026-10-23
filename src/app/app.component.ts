@@ -1,4 +1,5 @@
 import { Component } from '@angular/core';
+import { LoginService } from './features/auth/Login/service/Login.service';
 
 @Component({
   selector: 'app-root',
@@ -6,5 +7,5 @@ import { Component } from '@angular/core';
   styleUrls: ['./app.component.css']
 })
 export class AppComponent {
-  title = 'attendance-kiosk';
+  constructor(public loginService: LoginService) {}
 }

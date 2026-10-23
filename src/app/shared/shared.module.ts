@@ -4,7 +4,6 @@ import { FooterComponent } from './Footer/footer.component';
 import { HeaderComponent } from './Header/header.component';
 import { SideNavigationComponent } from './side-navigation/side-navigation.component';
 
-
 @NgModule({
   declarations: [  
     HeaderComponent,

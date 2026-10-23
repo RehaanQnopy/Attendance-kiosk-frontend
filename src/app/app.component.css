@@ -1,33 +1,11 @@
-:host {
-  display: flex;
-  flex-direction: column;
-  min-height: 100vh;
-}
-
-/* Row: navigator on the left, content on the right */
+/* In app.component.css: replace your existing .app-body / .app-nav / .app-content rules.
+   No left padding on .app-body is what makes the strip touch the left edge. */
 .app-body {
-  flex: 1;                    /* fills the space between header and footer */
   display: flex;
-  align-items: flex-start;    /* navigator keeps its own height, not stretched */
+  align-items: stretch;
   gap: 24px;
-  padding: 24px 40px;
+  padding: 24px 24px 24px 0;
+  min-height: 75vh;
 }
-
-/* Navigator keeps its natural width */
-.app-nav {
-  flex: 0 0 auto;
-}
-
-/* Content takes all the remaining width */
-.app-content {
-  flex: 1;
-  min-width: 0;               /* lets wide children shrink instead of overflowing */
-  display: flex;
-  flex-direction: column;     /* each new component stacks under the previous one */
-  gap: 24px;
-}
-
-/* Custom element tags are inline by default; make every feature component a block */
-.app-content > * {
-  display: block;
-}
+.app-nav { flex: none; }
+.app-content { flex: 1; min-width: 0; }

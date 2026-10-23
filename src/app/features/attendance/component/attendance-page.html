@@ -1,28 +1,184 @@
-<div class="attendance-layout">
+<div class="dash">
 
-  <div class="calendar-wrapper">
-    <h2 class="calendar-title">{{ viewDate | date:'MMMM yyyy' }}</h2>
+  <!-- ================= MAIN TILES ================= -->
+  <div class="grid">
 
-    <mwl-calendar-month-view [viewDate]="viewDate"></mwl-calendar-month-view>
-    <!--
-      [refresh]="refresh"
-      [cellTemplate]="dayCell"
-      (beforeViewRender)="onBeforeRender($event)"
-    -->
+    <!-- column A -->
+    <div class="col col-a">
+
+      <article class="card">
+        <h3>My tasks</h3>
+        <div class="scroll-x">
+          <table class="tbl">
+            <thead><tr><th>Project</th><th>Task</th><th>Work log</th><th>Due date</th></tr></thead>
+            <tbody>
+              <tr *ngFor="let t of mock.tasks">
+                <td>{{ t.project }}</td><td>{{ t.task }}</td><td>{{ t.log }}</td><td>{{ t.due }}</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </article>
+
+      <article class="card">
+        <h3>Your timing this month
+          <span class="legend">
+            <i class="full"></i>8h or more <i class="short"></i>Under 8h <i class="open"></i>In progress
+          </span>
+        </h3>
+        <div class="bars">
+          <div class="bar-col" *ngFor="let b of bars" [title]="b.tip">
+            <div class="bar" [ngClass]="b.kind" [style.height.%]="b.pct"></div>
+            <span>{{ b.day }}</span>
+          </div>
+        </div>
+      </article>
+
+      <div class="pair">
+        <article class="card">
+          <h3>New joins</h3>
+          <ng-container *ngTemplateOutlet="peopleList; context: { $implicit: mock.newJoins }"></ng-container>
+        </article>
+        <article class="card">
+          <h3>Quick links</h3>
+          <ng-container *ngTemplateOutlet="peopleList; context: { $implicit: mock.quickLinks }"></ng-container>
+        </article>
+      </div>
+    </div>
+
+    <!-- column B -->
+    <div class="col col-b">
+
+      <article class="card">
+        <h3>Your attendance <small>{{ monthLabel }}</small></h3>
+        <div class="stats">
+          <div><span>Present</span><strong>{{ presentDays }}</strong></div>
+          <div><span>Short days</span><strong>{{ month?.summary?.shortDays ?? 0 }}</strong></div>
+          <div><span>Total hours</span><strong>{{ totalHours }}</strong></div>
+        </div>
+      </article>
+
+      <article class="card">
+        <h3>Your leave</h3>
+        <div class="stats">
+          <div><span>Balance</span><strong>{{ mock.leave.balance }}</strong></div>
+          <div><span>Used</span><strong>{{ mock.leave.used }}</strong></div>
+          <div><span>Remain</span><strong>{{ mock.leave.remain }}</strong></div>
+        </div>
+      </article>
+
+      <article class="card">
+        <h3>Upcoming holidays</h3>
+        <ng-container *ngTemplateOutlet="peopleList; context: { $implicit: mock.holidays }"></ng-container>
+      </article>
+
+      <article class="card">
+        <h3>Work anniversary</h3>
+        <ng-container *ngTemplateOutlet="peopleList; context: { $implicit: mock.anniversaries }"></ng-container>
+      </article>
+    </div>
+
+    <!-- column C -->
+    <div class="col col-c">
+
+      <article class="card">
+        <h3>Employees on leave</h3>
+        <ng-container *ngTemplateOutlet="peopleList; context: { $implicit: mock.onLeave }"></ng-container>
+      </article>
+
+      <article class="card">
+        <h3>Upcoming birthdays</h3>
+        <ng-container *ngTemplateOutlet="peopleList; context: { $implicit: mock.birthdays }"></ng-container>
+      </article>
+
+      <article class="card">
+        <h3>Announcements</h3>
+        <ng-container *ngTemplateOutlet="peopleList; context: { $implicit: mock.announcements }"></ng-container>
+      </article>
+    </div>
   </div>
 
-  <div class="action-panel">
-    <button type="button" class="action-btn btn-login" (click)="login()">Login</button>
-    <button type="button" class="action-btn btn-logout" (click)="logout()">Logout</button>
-  </div>
+  <!-- ================= RIGHT PANEL ================= -->
+  <aside class="side">
 
+    <article class="card profile">
+      <div class="avatar">{{ userInitial }}</div>
+      <h2>{{ auth.currUser?.name }}</h2>
+      <p>{{ auth.currUser?.role | titlecase }}</p>
+    </article>
+
+    <article class="card timing">
+      <h3>Your timing</h3>
+      <div class="time-row">
+        <div>
+          <span>Current time</span>
+          <strong [class.live]="state === 'working'">{{ elapsed }}</strong>
+        </div>
+        <div>
+          <span>Clocked in at</span>
+          <strong>{{ (todayEntry?.inTime | date:'shortTime') || '--:--' }}</strong>
+        </div>
+      </div>
+
+      <button type="button" class="btn in"  *ngIf="state === 'idle'"    [disabled]="busy" (click)="onClockIn()">Clock in</button>
+      <button type="button" class="btn out" *ngIf="state === 'working'" [disabled]="busy" (click)="onClockOut()">Clock out</button>
+      <button type="button" class="btn off" *ngIf="state === 'done'"    disabled>Clocked out for today</button>
+
+      <p class="error" *ngIf="error">{{ error }}</p>
+    </article>
+
+    <article class="card cal-card">
+      <div class="cal-head">
+        <h3>{{ viewDate | date:'MMMM yyyy' }}</h3>
+        <div>
+          <button type="button" class="icon-btn" (click)="onMonthChange(-1)" aria-label="Previous month">&lsaquo;</button>
+          <button type="button" class="icon-btn" (click)="onMonthChange(1)" aria-label="Next month">&rsaquo;</button>
+        </div>
+      </div>
+
+      <mwl-calendar-month-view
+        class="mini-cal"
+        [viewDate]="viewDate"
+        [events]="events"
+        [cellTemplate]="dayCell"
+        [headerTemplate]="weekHeader">
+      </mwl-calendar-month-view>
+
+      <div class="legend cal-legend">
+        <i class="full"></i>Full day <i class="short"></i>Short day <i class="open"></i>In progress
+      </div>
+    </article>
+
+    <article class="card">
+      <h3>Early time reminder</h3>
+      <p class="line" *ngFor="let r of mock.reminders">{{ r }}</p>
+      <h3 class="gap">Late arrival count</h3>
+      <p class="line">Your late arrival count: <b class="late">{{ mock.lateArrivals }}</b></p>
+    </article>
+  </aside>
 </div>
 
-<!-- <button (click)="onMonthChange(-1)">Prev</button> -->
-<!-- <button (click)="onMonthChange(1)">Next</button> -->
+<!-- ============ reusable templates ============ -->
 
-<!-- <ng-template #dayCell let-day="day">
-  <div class="tile" [title]="day.meta?.tooltip || ''">
-    {{ day.date | date:'d' }}
+<ng-template #peopleList let-list>
+  <ul class="rows">
+    <li *ngFor="let p of list">
+      <span class="av" *ngIf="p.sub">{{ p.name.charAt(0) }}</span>
+      <div class="who"><b>{{ p.name }}</b><small *ngIf="p.sub">{{ p.sub }}</small></div>
+      <em *ngIf="p.note">{{ p.note }}</em>
+    </li>
+  </ul>
+</ng-template>
+
+<ng-template #weekHeader let-days="days">
+  <div class="cal-cell-row cal-header">
+    <div class="cal-cell" *ngFor="let d of days">{{ d.date | date:'EEEEE' }}</div>
   </div>
-</ng-template> -->
+</ng-template>
+
+<ng-template #dayCell let-day="day">
+  <div class="mini-cell" [class.out]="!day.inMonth">
+    <span class="num">{{ day.date | date:'d' }}</span>
+    <i class="dot" *ngIf="day.events.length" [style.background]="day.events[0].color?.primary"></i>
+  </div>
+</ng-template>

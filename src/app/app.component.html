@@ -1,15 +1,11 @@
-<app-header></app-header>
+<app-header *ngIf="loginService.currUser"></app-header>
 
 <main class="app-body">
-  <side-navigator class="app-nav"></side-navigator>
+  <side-navigator *ngIf="loginService.currUser" class="app-nav"></side-navigator>
 
   <section class="app-content">
-    <!-- Add new feature components here, by selector. They stack top to bottom. -->
-    <attendance-page></attendance-page>
-
-    <!-- Later, when routing is ready, replace the line above with: -->
-    <!-- <router-outlet></router-outlet> -->
+    <router-outlet></router-outlet>
   </section>
 </main>
 
-<app-footer></app-footer>
+<app-footer *ngIf="loginService.currUser"></app-footer>
