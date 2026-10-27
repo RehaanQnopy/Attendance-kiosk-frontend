@@ -1,0 +1,95 @@
+<section class="sheet-card">
+
+  <!-- ===== toolbar ===== -->
+  <header class="toolbar">
+    <div class="toolbar__title">
+      <h2>Monthly attendance</h2>
+      <p>{{ monthLabel }}<ng-container *ngIf="employeeName"> &middot; {{ employeeName }}</ng-container></p>
+    </div>
+
+    <div class="toolbar__actions">
+      <div class="month-nav">
+        <button type="button" class="icon-btn" (click)="changeMonth(-1)" aria-label="Previous month">&lsaquo;</button>
+        <button type="button" class="icon-btn" (click)="changeMonth(1)" [disabled]="isCurrentMonth" aria-label="Next month">&rsaquo;</button>
+      </div>
+
+      <button type="button" class="dl-btn dl-btn--primary" (click)="downloadExcel()" [disabled]="loading || !!error || exporting">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 4v11M7.5 11 12 15.5 16.5 11M5 19.5h14"/></svg>
+        {{ exporting ? 'Preparing…' : 'Download Excel' }}
+      </button>
+      <button type="button" class="dl-btn" (click)="downloadCsv()" [disabled]="loading || !!error">CSV</button>
+    </div>
+  </header>
+
+  <!-- ===== summary strip ===== -->
+  <div class="summary" *ngIf="!loading && !error">
+    <div><span>Full days</span><strong class="c-full">{{ totals.full }}</strong></div>
+    <div><span>Short days</span><strong class="c-short">{{ totals.short }}</strong></div>
+    <div><span>Leave</span><strong class="c-leave">{{ totals.leave }}</strong></div>
+    <div><span>Absent</span><strong class="c-absent">{{ totals.absent }}</strong></div>
+    <div><span>Total hours</span><strong>{{ totals.hoursLabel }}</strong></div>
+    <div><span>Average / day</span><strong>{{ totals.avgLabel }}</strong></div>
+  </div>
+
+  <!-- ===== states ===== -->
+  <p class="state" *ngIf="loading">Loading attendance…</p>
+  <p class="state state--error" *ngIf="error && !loading">
+    {{ error }} <button type="button" class="link" (click)="load()">Try again</button>
+  </p>
+
+  <!-- ===== spreadsheet ===== -->
+  <div class="sheet-wrap" *ngIf="!loading && !error">
+    <table class="sheet">
+      <caption class="sr-only">Attendance for {{ monthLabel }}</caption>
+      <thead>
+        <tr>
+          <th class="rownum" scope="col"></th>
+          <th scope="col">Date</th>
+          <th scope="col">Day</th>
+          <th scope="col">Status</th>
+          <th scope="col" class="num">In time</th>
+          <th scope="col" class="num">Out time</th>
+          <th scope="col" class="num">Total duration</th>
+          <th scope="col" class="num">vs 8h</th>
+        </tr>
+      </thead>
+
+      <tbody>
+        <tr *ngFor="let r of rows; let i = index"
+            [class.is-off]="r.status === 'weekend'"
+            [class.is-upcoming]="r.status === 'upcoming'"
+            [class.is-today]="r.isToday">
+          <th class="rownum" scope="row">{{ i + 1 }}</th>
+          <td>{{ r.dateLabel }}</td>
+          <td>{{ r.weekday }}</td>
+          <td><span class="chip" [ngClass]="'s-' + r.status">{{ r.statusLabel }}</span></td>
+          <td class="num">{{ r.inTime }}</td>
+          <td class="num">{{ r.outTime }}</td>
+          <td class="num">{{ r.duration }}</td>
+          <td class="num" [class.pos]="r.diffMin > 0" [class.neg]="r.diffMin < 0">{{ r.diffLabel }}</td>
+        </tr>
+      </tbody>
+
+      <tfoot>
+        <tr>
+          <th class="rownum" scope="row">&Sigma;</th>
+          <td colspan="3">Month total</td>
+          <td class="num"></td>
+          <td class="num"></td>
+          <td class="num">{{ totals.hoursLabel }}</td>
+          <td class="num" [class.pos]="totals.diffMin > 0" [class.neg]="totals.diffMin < 0">{{ totals.diffLabel }}</td>
+        </tr>
+      </tfoot>
+    </table>
+  </div>
+
+  <!-- ===== legend ===== -->
+  <div class="legend" *ngIf="!loading && !error">
+    <span><i class="s-full"></i>Full day (8h or more)</span>
+    <span><i class="s-short"></i>Short day</span>
+    <span><i class="s-leave"></i>Leave</span>
+    <span><i class="s-absent"></i>Absent</span>
+    <span><i class="s-progress"></i>In progress</span>
+    <span><i class="s-noout"></i>No clock-out</span>
+  </div>
+</section>

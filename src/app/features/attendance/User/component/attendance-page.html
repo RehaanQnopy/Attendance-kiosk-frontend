@@ -1,96 +1,98 @@
 <div class="dash">
 
-  <!-- ================= MAIN TILES ================= -->
-  <div class="grid">
+  <!-- ================= MAIN AREA ================= -->
+  <div class="main">
 
-    <!-- column A -->
-    <div class="col col-a">
+    <header class="greet">
+      <h1>Welcome back, {{ auth.currUser?.name }}</h1>
+      <p>Here is your attendance for {{ monthLabel }}.</p>
+    </header>
 
-      <article class="card">
-        <h3>My tasks</h3>
-        <div class="scroll-x">
-          <table class="tbl">
-            <thead><tr><th>Project</th><th>Task</th><th>Work log</th><th>Due date</th></tr></thead>
-            <tbody>
-              <tr *ngFor="let t of mock.tasks">
-                <td>{{ t.project }}</td><td>{{ t.task }}</td><td>{{ t.log }}</td><td>{{ t.due }}</td>
-              </tr>
-            </tbody>
-          </table>
+    <!-- ---------- summary stats ---------- -->
+    <section class="stat-row" aria-label="Attendance summary">
+
+      <article class="stat">
+        <span class="stat__icon ic-green">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="8" r="3.5"/><path d="M5 20c0-3.6 3-6 7-6s7 2.4 7 6"/></svg>
+        </span>
+        <div>
+          <span class="stat__label">Present days</span>
+          <strong>{{ presentDays }}</strong>
         </div>
       </article>
 
-      <article class="card">
-        <h3>Your timing this month
-          <span class="legend">
-            <i class="full"></i>8h or more <i class="short"></i>Under 8h <i class="open"></i>In progress
-          </span>
-        </h3>
-        <div class="bars">
-          <div class="bar-col" *ngFor="let b of bars" [title]="b.tip">
-            <div class="bar" [ngClass]="b.kind" [style.height.%]="b.pct"></div>
-            <span>{{ b.day }}</span>
-          </div>
+      <article class="stat">
+        <span class="stat__icon ic-rose">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="8.5"/><path d="M12 7.5V12l3 2"/></svg>
+        </span>
+        <div>
+          <span class="stat__label">Short days</span>
+          <strong>{{ month?.summary?.shortDays ?? 0 }}</strong>
         </div>
       </article>
 
-      <div class="pair">
-        <article class="card">
-          <h3>New joins</h3>
-          <ng-container *ngTemplateOutlet="peopleList; context: { $implicit: mock.newJoins }"></ng-container>
-        </article>
-        <article class="card">
-          <h3>Quick links</h3>
-          <ng-container *ngTemplateOutlet="peopleList; context: { $implicit: mock.quickLinks }"></ng-container>
-        </article>
+      <article class="stat">
+        <span class="stat__icon ic-teal">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 20V10M12 20V4M19 20v-7"/></svg>
+        </span>
+        <div>
+          <span class="stat__label">Total hours</span>
+          <strong>{{ totalHours }}</strong>
+        </div>
+      </article>
+
+      <article class="stat">
+        <span class="stat__icon ic-amber">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3.5" y="5" width="17" height="15" rx="3"/><path d="M3.5 10h17M8 3v4M16 3v4"/></svg>
+        </span>
+        <div>
+          <span class="stat__label">Leave remaining</span>
+          <strong>{{ mock.leave.remain }}</strong>
+          <small>{{ mock.leave.used }} used of {{ mock.leave.balance }}</small>
+        </div>
+      </article>
+    </section>
+
+    <!-- ---------- monthly chart ---------- -->
+    <article class="card">
+      <h3>Your timing this month
+        <span class="legend">
+          <i class="full"></i>8h or more <i class="short"></i>Under 8h <i class="open"></i>In progress
+        </span>
+      </h3>
+      <div class="bars">
+        <div class="bar-col" *ngFor="let b of bars" [title]="b.tip">
+          <div class="bar" [ngClass]="b.kind" [style.height.%]="b.pct"></div>
+          <span>{{ b.day }}</span>
+        </div>
       </div>
-    </div>
+    </article>
 
-    <!-- column B -->
-    <div class="col col-b">
+    <!-- ---------- tasks ---------- -->
+    <article class="card">
+      <h3>My tasks</h3>
+      <div class="scroll-x">
+        <table class="tbl">
+          <thead><tr><th>Project</th><th>Task</th><th>Work log</th><th>Due date</th></tr></thead>
+          <tbody>
+            <tr *ngFor="let t of mock.tasks">
+              <td>{{ t.project }}</td><td>{{ t.task }}</td><td>{{ t.log }}</td><td>{{ t.due }}</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </article>
 
-      <article class="card">
-        <h3>Your attendance <small>{{ monthLabel }}</small></h3>
-        <div class="stats">
-          <div><span>Present</span><strong>{{ presentDays }}</strong></div>
-          <div><span>Short days</span><strong>{{ month?.summary?.shortDays ?? 0 }}</strong></div>
-          <div><span>Total hours</span><strong>{{ totalHours }}</strong></div>
-        </div>
-      </article>
-
-      <article class="card">
-        <h3>Your leave</h3>
-        <div class="stats">
-          <div><span>Balance</span><strong>{{ mock.leave.balance }}</strong></div>
-          <div><span>Used</span><strong>{{ mock.leave.used }}</strong></div>
-          <div><span>Remain</span><strong>{{ mock.leave.remain }}</strong></div>
-        </div>
-      </article>
-
+    <!-- ---------- need-to-know lists ---------- -->
+    <div class="trio">
       <article class="card">
         <h3>Upcoming holidays</h3>
         <ng-container *ngTemplateOutlet="peopleList; context: { $implicit: mock.holidays }"></ng-container>
       </article>
-
-      <article class="card">
-        <h3>Work anniversary</h3>
-        <ng-container *ngTemplateOutlet="peopleList; context: { $implicit: mock.anniversaries }"></ng-container>
-      </article>
-    </div>
-
-    <!-- column C -->
-    <div class="col col-c">
-
       <article class="card">
         <h3>Employees on leave</h3>
         <ng-container *ngTemplateOutlet="peopleList; context: { $implicit: mock.onLeave }"></ng-container>
       </article>
-
-      <article class="card">
-        <h3>Upcoming birthdays</h3>
-        <ng-container *ngTemplateOutlet="peopleList; context: { $implicit: mock.birthdays }"></ng-container>
-      </article>
-
       <article class="card">
         <h3>Announcements</h3>
         <ng-container *ngTemplateOutlet="peopleList; context: { $implicit: mock.announcements }"></ng-container>
@@ -98,17 +100,18 @@
     </div>
   </div>
 
-  <!-- ================= RIGHT PANEL ================= -->
+  <!-- ================= RIGHT PANEL: mark attendance ================= -->
   <aside class="side">
 
-    <article class="card profile">
-      <div class="avatar">{{ userInitial }}</div>
-      <h2>{{ auth.currUser?.name }}</h2>
-      <p>{{ auth.currUser?.role | titlecase }}</p>
-    </article>
+    <article class="card clock">
+      <div class="clock__who">
+        <div class="avatar">{{ userInitial }}</div>
+        <div>
+          <h2>{{ auth.currUser?.name }}</h2>
+          <p>{{ auth.currUser?.role | titlecase }}</p>
+        </div>
+      </div>
 
-    <article class="card timing">
-      <h3>Your timing</h3>
       <div class="time-row">
         <div>
           <span>Current time</span>

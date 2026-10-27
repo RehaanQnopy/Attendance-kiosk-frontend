@@ -3,7 +3,7 @@ import { NgModule } from '@angular/core';
 import { CalendarModule } from 'angular-calendar';
 
 import { AttendanceRoutingModule } from './attendance-routing.module';
-import { AttendancePageComponent } from './component/attendance-page';
+import { AttendancePageComponent } from './User/component/attendance-page';
 
 @NgModule({
   declarations: [AttendancePageComponent],

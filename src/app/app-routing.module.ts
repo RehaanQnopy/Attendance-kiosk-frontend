@@ -32,11 +32,21 @@ const routes: Routes = [
     loadChildren: () =>
       import('./features/attendance/attendance.module').then(m => m.AttendanceModule)
   },
+  { path: 'manager', 
+    canActivate: [AuthGuard],
+    loadChildren: () => import('./features/attendance/Manager/attendance.manager.modules').then(m=>m.ManagerModule)
+  },
   { path: '**', redirectTo: 'login' }
 ];
 
 @NgModule({
-  imports: [RouterModule.forRoot(routes)],
-  exports: [RouterModule]
+  imports: 
+  [
+    RouterModule.forRoot(routes)
+  ],
+  exports: 
+  [
+    RouterModule
+  ]
 })
 export class AppRoutingModule {}

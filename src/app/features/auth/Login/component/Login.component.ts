@@ -14,6 +14,9 @@ export class LoginPage {
   loading = false;
 
   loginForm = new FormGroup({
+    //Validator.required ensures that, the field is not empty and Validator.email is an in-built feature
+    //which validates that the email written by user is of proper syntax,
+    //Validators, are written in [] brackets we can add further Validators also if required
     email: new FormControl('', [Validators.required, Validators.email])
   });
 
@@ -25,7 +28,7 @@ export class LoginPage {
       this.errorMessage = 'Enter a valid email to log in.';
       return;
     }
-    this.login(this.loginForm.value.email!.trim().toLowerCase());
+    this.login(this.loginForm.value.email?.trim().toLowerCase());
   }
 
   public login(email: string): void {
@@ -33,10 +36,10 @@ export class LoginPage {
     this.errorMessage = '';
 
     this.loginService.isUserValid(email).subscribe({
-      next: () => {
+        next: (user) => {
         this.loading = false;
-        this.router.navigate(['/attendance']);
-      },
+        this.router.navigate([user.role === 'MANAGER' ? '/attendance/manager' : '/attendance']);
+},
       error: (err) => {
         this.loading = false;
         this.errorMessage = err.status === 401

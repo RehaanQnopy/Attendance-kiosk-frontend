@@ -3,7 +3,8 @@
   <!-- ===== Main menu ===== -->
   <nav class="side-nav__menu">
 
-    <button type="button" class="nav-item" (click)="Home()">
+    <button type="button" class="nav-item" [class.active]="active === 'home'"
+            [attr.aria-current]="active === 'home' ? 'page' : null" (click)="Home()">
       <span class="nav-item__icon">
         <svg viewBox="0 0 24 24" aria-hidden="true">
           <path d="M3 10.5 12 3l9 7.5V20a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1z"/>
@@ -12,46 +13,47 @@
       <span class="nav-item__label">Home</span>
     </button>
 
-    <button type="button" class="nav-item" (click)="MyAttendance()">
+    <button type="button" class="nav-item" [class.active]="active === 'attendance'"
+            [attr.aria-current]="active === 'attendance' ? 'page' : null" (click)="MyAttendance()">
       <span class="nav-item__icon">
         <svg viewBox="0 0 24 24" aria-hidden="true">
           <rect x="3" y="4.5" width="18" height="16" rx="3"/>
           <path d="M3 9.5h18M8 3v3M16 3v3M8.5 15l2.5 2.5 4.5-5"/>
         </svg>
       </span>
-      <span class="nav-item__label">My attendance</span>
+      <span class="nav-item__label">Attendance</span>
     </button>
 
-    <button type="button" class="nav-item" (click)="MarkLeave()">
+    <button type="button" class="nav-item" [class.active]="active === 'leave'"
+            [attr.aria-current]="active === 'leave' ? 'page' : null" (click)="MarkLeave()">
       <span class="nav-item__icon">
         <svg viewBox="0 0 24 24" aria-hidden="true">
           <path d="M14 3h5a1 1 0 0 1 1 1v16a1 1 0 0 1-1 1h-5"/>
           <path d="M10 8l-4 4 4 4M6 12h10"/>
         </svg>
       </span>
-      <span class="nav-item__label">Mark leave</span>
+      <span class="nav-item__label">Leave</span>
     </button>
 
-    <!--
-      Adding another button later? Copy one block above, change
-      the (click) handler, the label and the SVG path. That's it.
-    -->
+    <button type="button" class="nav-item" *ngIf="loginService.currUser?.role === 'MANAGER'"
+        [class.active]="active === 'manager'"
+        [attr.aria-current]="active === 'manager' ? 'page' : null" (click)="Manager()">
+  <span class="nav-item__icon">
+    <svg viewBox="0 0 24 24" aria-hidden="true">
+      <circle cx="9" cy="8" r="3.5"/>
+      <path d="M2.5 20c0-3.6 2.9-6 6.5-6s6.5 2.4 6.5 6M16 5.5a3.5 3.5 0 0 1 0 6.5M18 14.3c2 .7 3.5 2.6 3.5 5.7"/>
+    </svg>
+  </span>
+  <span class="nav-item__label">Team</span>
+</button>
 
+    <!-- Adding another button later? Copy one block above, change the
+         active key, the (click) handler, the label and the SVG path. -->
   </nav>
 
-  <!-- ===== Slot: calendar =====
-       Usage in the parent template:
-       <side-navigator>
-         <app-calendar sideNavCalendar></app-calendar>
-       </side-navigator>
-  -->
+  <!-- ===== Optional slots (hidden when nothing is projected) ===== -->
   <div class="side-nav__slot"><ng-content select="[sideNavCalendar]"></ng-content></div>
-
-  <!-- ===== Slot: holidays ===== -->
   <div class="side-nav__slot"><ng-content select="[sideNavHoliday]"></ng-content></div>
-
-  <!-- ===== Slot: any extra buttons or widgets =====
-       Anything without a special attribute lands here. -->
   <div class="side-nav__slot"><ng-content></ng-content></div>
 
 </aside>

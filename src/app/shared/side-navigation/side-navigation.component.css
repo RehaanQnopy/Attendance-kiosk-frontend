@@ -1,13 +1,13 @@
-/* Thin strip, attached to the left edge, rounded only on its right side */
+/* Cyan strip attached to the left edge; the page behind it stays white */
 :host {
-  display: flex;          /* lets the strip stretch to the height of the page body */
+  display: flex;          /* stretches the strip to the height of the page body */
   flex: none;
 }
 
 .side-nav {
   width: 88px;
   flex: 1;
-  background: #fff;
+  background: #43949a;
   border-radius: 0 20px 20px 0;
   box-shadow: 4px 0 20px rgba(20, 60, 64, .12);
   padding: 16px 0;
@@ -29,7 +29,7 @@
   padding: 10px 4px;
   border: 0;
   background: transparent;
-  color: #5d6f72;
+  color: rgba(255, 255, 255, .78);
   cursor: pointer;
   font: inherit;
 }
@@ -55,11 +55,12 @@
 
 .nav-item__label { font-size: 12px; line-height: 1.2; text-align: center; }
 
-.nav-item:hover .nav-item__icon { background: #eaf4f4; color: #2f7a80; }
+.nav-item:hover { color: #fff; }
+.nav-item:hover .nav-item__icon { background: rgba(255, 255, 255, .14); }
 
-/* active page: tinted icon plus a bar on the left boundary */
-.nav-item.active { color: #2f7a80; font-weight: 500; }
-.nav-item.active .nav-item__icon { background: #dff0f0; }
+/* active page: white icon tile plus a bar on the left boundary */
+.nav-item.active { color: #fff; font-weight: 500; }
+.nav-item.active .nav-item__icon { background: #fff; color: #2f7a80; }
 .nav-item.active::before {
   content: "";
   position: absolute;
@@ -68,10 +69,10 @@
   bottom: 12px;
   width: 4px;
   border-radius: 0 4px 4px 0;
-  background: #43949a;
+  background: #fff;
 }
 
-.nav-item:focus-visible { outline: 3px solid #43949a; outline-offset: -3px; border-radius: 12px; }
+.nav-item:focus-visible { outline: 3px solid #fff; outline-offset: -3px; border-radius: 12px; }
 
 /* slots are hidden when empty so they never leave gaps */
 .side-nav__slot:empty { display: none; }

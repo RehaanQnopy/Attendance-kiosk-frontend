@@ -10,8 +10,8 @@
 
 //   constructor(private http: HttpClient) {}
 
-//   getMonth(monthKey: string): Observable<AttendanceMonth> {
-//     return this.http.get<AttendanceMonth>(`${this.baseUrl}/months/${monthKey}`, this.opts);
+//   getMonth(monthAndYearKey: string): Observable<AttendanceMonth> {
+//     return this.http.get<AttendanceMonth>(`${this.baseUrl}/months/${monthAndYearKey}`, this.opts);
 //   }
 //   clockIn(): Observable<AttendanceMonth> {
 //     return this.http.post<AttendanceMonth>(`${this.baseUrl}/clock-in`, {}, this.opts);
@@ -23,7 +23,7 @@
 
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { delay, Observable, of, throwError } from 'rxjs';
+import { catchError, delay, Observable, of, throwError } from 'rxjs';
 import { environment } from 'src/environments/environment';
 import { AttendanceMonth } from '../../models/Attendance-page';
 import { DayEntry } from '../../models/DayEntry';
@@ -39,15 +39,18 @@ export class AttendancePageService {
 
   constructor(private http: HttpClient) {}
 
-  getMonth(monthKey: string): Observable<AttendanceMonth> {
-    if (environment.skipAuth) return this.reply(this.fakeMonth(monthKey));
-    return this.http.get<AttendanceMonth>(`${this.baseUrl}/months/${monthKey}`, this.opts);
+  getMonth(monthAndYearKey: string): Observable<AttendanceMonth> {
+    if (environment.skipAuth) return this.reply(this.fakeMonth(monthAndYearKey));
+    return this.http.get<AttendanceMonth>(`${this.baseUrl}/months/${monthAndYearKey}`, this.opts).pipe((catchError(err => {
+        console.error(`Error in fetching the user's month data from the backend`);
+        throw new Error(`Error in fetching the user's month data from the backend`);
+    })));
   }
 
   clockIn(): Observable<AttendanceMonth> {
     if (environment.skipAuth) {
-      const { monthKey, day } = this.istToday();
-      const month = this.fakeMonth(monthKey);
+      const { monthAndYearKey, day } = this.istToday();
+      const month = this.fakeMonth(monthAndYearKey);
       if (month.days[String(day)]) return this.fail('Already clocked in today');
       month.days[String(day)] = {
         type: 'work', inTime: new Date().toISOString(), outTime: null, totalDurationMin: null
@@ -59,8 +62,8 @@ export class AttendancePageService {
 
   clockOut(): Observable<AttendanceMonth> {
     if (environment.skipAuth) {
-      const { monthKey, day } = this.istToday();
-      const month = this.fakeMonth(monthKey);
+      const { monthAndYearKey, day } = this.istToday();
+      const month = this.fakeMonth(monthAndYearKey);
       const entry = month.days[String(day)];
       if (!entry) return this.fail('Not clocked in today');
       if (entry.outTime) return this.fail('Already clocked out today');
@@ -92,8 +95,8 @@ export class AttendancePageService {
 const summary: MonthSummary = { fullDays: 0, shortDays: 0, leaveDays: 0, totalMin: 0 };
 
     let last = new Date(y, m, 0).getDate();            // whole month
-    if (key === today.monthKey) last = today.day - 1;  // only days before today
-    if (key > today.monthKey) last = 0;                // future month: nothing
+    if (key === today.monthAndYearKey) last = today.day - 1;  // only days before today
+    if (key > today.monthAndYearKey) last = 0;                // future month: nothing
 
     for (let d = 1; d <= last; d++) {
       const weekday = new Date(y, m - 1, d).getDay();
@@ -121,11 +124,11 @@ const summary: MonthSummary = { fullDays: 0, shortDays: 0, leaveDays: 0, totalMi
     return throwError(() => ({ status: 409, error: { message } })).pipe(delay(300));
   }
 
-  private istToday(): { monthKey: string; day: number } {
+  private istToday(): { monthAndYearKey: string; day: number } {
     const parts = new Intl.DateTimeFormat('en-GB', {
       timeZone: 'Asia/Kolkata', year: 'numeric', month: '2-digit', day: '2-digit'
     }).formatToParts(new Date());
     const get = (t: string) => parts.find(p => p.type === t)!.value;
-    return { monthKey: `${get('year')}-${get('month')}`, day: Number(get('day')) };
+    return { monthAndYearKey: `${get('year')}-${get('month')}`, day: Number(get('day')) };
   }
 }

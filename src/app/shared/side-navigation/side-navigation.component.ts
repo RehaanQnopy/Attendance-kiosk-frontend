@@ -1,4 +1,6 @@
 import { Component } from '@angular/core';
+import { Router } from '@angular/router';
+import { LoginService } from 'src/app/features/auth/Login/service/Login.service';
 
 @Component({
     selector: 'side-navigator',
@@ -7,10 +9,16 @@ import { Component } from '@angular/core';
 })
 export class SideNavigationComponent {
 
-    constructor(){};
+    active = 'attendance'
+
+    constructor(private router: Router, public loginService: LoginService){};
 
     MyAttendance() {};
     MarkLeave() {};
     Home() {};
+    Manager() {
+    this.active = 'manager';
+    this.router.navigate(['/attendance/manager']);
+}
 
 }
