@@ -18,7 +18,9 @@ export class SideNavigationComponent {
         this.router.navigate(['/attendance/myAttendance'])
     };
     MarkLeave() {};
-    Home() {};
+    Home() {
+        this.router.navigate(['/attendance/']);
+    };
     Manager() {
         this.active = 'manager';
         this.router.navigate(['/attendance/manager']);
