@@ -108,7 +108,7 @@
         <div class="avatar">{{ userInitial }}</div>
         <div>
           <h2>{{ auth.currUser?.name }}</h2>
-          <p>{{ auth.currUser?.role | titlecase }}</p>
+          <p>{{ auth.currUser?.role?.join(', ' ) | titlecase }}</p>
         </div>
       </div>
 

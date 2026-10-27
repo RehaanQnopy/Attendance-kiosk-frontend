@@ -26,7 +26,7 @@ isUserValid(email: string): Observable<SessionUser> {
     { 
         id: 'dev-user', 
         name: 'Test Employee', 
-         role: email.toLowerCase().startsWith('manager') ? 'MANAGER' : 'EMPLOYEE'
+        role: email.toLowerCase().startsWith('manager') ? ['EMPLOYEE', 'MANAGER'] : ['EMPLOYEE']
     };
     this.currUser = user;
     return of(user).pipe(delay(300));
@@ -36,4 +36,10 @@ isUserValid(email: string): Observable<SessionUser> {
     .post<SessionUser>(this.apiUrl, { email }, { withCredentials: true })
     .pipe(tap(user => (this.currUser = user)));
 }
+
+//Since in many palces we need the role to display different components absed on the role, we ensure we provide string
+//and not string[]
+    hasRole(role: string): boolean {
+            return this.currUser?.role.includes(role) ?? false;
+        }
 }

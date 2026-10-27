@@ -1,1 +1,1 @@
-export interface SessionUser { id: string; name: string; role: string; }
+export interface SessionUser { id: string; name: string; role: string[]; }

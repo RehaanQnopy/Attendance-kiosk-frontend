@@ -1,0 +1,52 @@
+<section class="page">
+
+  <!-- ===== top bar: title, month switcher, download ===== -->
+  <header class="bar">
+    <h1>My attendance</h1>
+
+    <div class="month-switch">
+      <button type="button" class="icon-btn" (click)="onPreviousMonth()" [disabled]="loading"
+              aria-label="Previous month">&lsaquo;</button>
+
+      <span class="month-label">{{ monthLabel }}</span>
+
+      <!-- greyed out on the current month, because there is no future data to show -->
+      <button type="button" class="icon-btn" (click)="onNextMonth()" [disabled]="loading || isCurrentMonth"
+              aria-label="Next month">&rsaquo;</button>
+    </div>
+
+    <button type="button" class="download" (click)="downloadExcel()"
+            [disabled]="loading || downloading || !rows.length">
+      {{ downloading ? 'Preparing file' : 'Download Excel' }}
+    </button>
+  </header>
+
+  <p class="error" *ngIf="error">{{ error }}</p>
+  <p class="state" *ngIf="loading">Loading attendance</p>
+
+  <!-- ===== the sheet ===== -->
+  <div class="sheet-wrap" *ngIf="rows.length">
+    <table class="sheet" [attr.aria-label]="'Attendance for ' + monthLabel">
+      <thead>
+        <tr>
+          <th *ngFor="let c of columns" scope="col">{{ c.header }}</th>
+        </tr>
+      </thead>
+
+      <tbody>
+        <tr *ngFor="let r of rows">
+          <td *ngFor="let c of columns" [ngSwitch]="c.key" [style.text-align]="c.align">
+            <ng-container *ngSwitchCase="'date'">{{ r.date | date:'dd MMM yyyy':'UTC' }}</ng-container>
+            <ng-container *ngSwitchCase="'weekday'">{{ r.weekday }}</ng-container>
+            <ng-container *ngSwitchCase="'inMin'">{{ formatClock(r.inMin) }}</ng-container>
+            <ng-container *ngSwitchCase="'outMin'">{{ formatClock(r.outMin) }}</ng-container>
+            <ng-container *ngSwitchCase="'durationMin'">{{ formatDuration(r.durationMin) }}</ng-container>
+            <span *ngSwitchCase="'status'" class="status" [ngClass]="r.status">{{ statusLabel[r.status] }}</span>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <p class="state" *ngIf="!loading && !error && !rows.length">No attendance recorded for {{ monthLabel }}.</p>
+</section>

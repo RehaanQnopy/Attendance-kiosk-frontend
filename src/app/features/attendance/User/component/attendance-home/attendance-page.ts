@@ -2,11 +2,11 @@ import { Component, OnDestroy, OnInit } from '@angular/core';
 import { CalendarEvent } from 'angular-calendar';
 import { Observable } from 'rxjs';
 
-import { AttendanceMonth } from '../models/Attendance-page';
-import { DayEntry } from '../models/DayEntry';
-import { AttendancePageService } from '../service/Attendance-Page/attendance-page.service';
+import { AttendanceMonth } from '../../models/Attendance-page';
+import { DayEntry } from '../../models/DayEntry';
+import { AttendancePageService } from '../../service/Attendance-Page/attendance-page.service';
 // Use the exact class name that Login.service.ts exports
-import { LoginService } from '../../../auth/Login/service/Login.service';
+import { LoginService } from '../../../../auth/Login/service/Login.service';
 import { MOCK } from './attendance-page.mock';
 
 /*
@@ -213,6 +213,7 @@ export class AttendancePageComponent implements OnInit, OnDestroy {
     const [y, mo] = m.month.split('-').map(Number);
 
     // calendar dots
+    //In .map([d,e]) d->key value and e->DayEntry for that particular day while traversing the days of the AttendanceMonth
     this.events = Object.entries(m.days || {}).map(([d, e]) => ({
       start: new Date(y, mo - 1, Number(d)),
       title: e.outTime ? 'Present' : 'Clocked in',

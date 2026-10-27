@@ -9,16 +9,19 @@ import { LoginService } from 'src/app/features/auth/Login/service/Login.service'
 })
 export class SideNavigationComponent {
 
-    active = 'attendance'
+    active = 'attendance';
 
     constructor(private router: Router, public loginService: LoginService){};
 
-    MyAttendance() {};
+    MyAttendance() {
+        this.active='myAttendance';
+        this.router.navigate(['/attendance/myAttendance'])
+    };
     MarkLeave() {};
     Home() {};
     Manager() {
-    this.active = 'manager';
-    this.router.navigate(['/attendance/manager']);
-}
+        this.active = 'manager';
+        this.router.navigate(['/attendance/manager']);
+    }
 
 }

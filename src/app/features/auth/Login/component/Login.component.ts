@@ -38,7 +38,15 @@ export class LoginPage {
     this.loginService.isUserValid(email).subscribe({
         next: (user) => {
         this.loading = false;
-        this.router.navigate([user.role === 'MANAGER' ? '/attendance/manager' : '/attendance']);
+        const roles = (user.role ?? []).map(r => r.toUpperCase());
+
+        //Always prefer using includes instead od exact matching the string
+        if (roles.includes('MANAGER'))       this.router.navigate(['/attendance/manager']);
+        else if (roles.includes('EMPLOYEE')) this.router.navigate(['/attendance']);
+        else {
+             this.loginService.currUser = null;
+             this.errorMessage = 'No role is assigned to this account.';
+            }
 },
       error: (err) => {
         this.loading = false;

@@ -35,7 +35,7 @@
       <span class="nav-item__label">Leave</span>
     </button>
 
-    <button type="button" class="nav-item" *ngIf="loginService.currUser?.role === 'MANAGER'"
+    <button type="button" class="nav-item" *ngIf="loginService.hasRole('MANAGER')"
         [class.active]="active === 'manager'"
         [attr.aria-current]="active === 'manager' ? 'page' : null" (click)="Manager()">
   <span class="nav-item__icon">
