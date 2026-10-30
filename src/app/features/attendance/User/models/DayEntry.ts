@@ -3,6 +3,6 @@ export interface DayEntry {
   inTime?: string;                  // ISO string from the server
   outTime?: string | null;
   totalDurationMin?: number | null;
-  leaveId?: string;
-  leaveType?: string;
+  leaveId?: string | null;
+  leaveType?: string | null;
 }
