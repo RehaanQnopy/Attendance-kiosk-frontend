@@ -4,8 +4,8 @@
 
 export const environment = {
   production: false,
-  baseUrl: 'http://localhost:8080/api',
-  skipAuth: true        // dev only: fake login and fake attendance data
+  baseUrl: 'http://localhost:8080',
+  skipAuth: false    // dev only: fake login and fake attendance data
 };
 
 /*

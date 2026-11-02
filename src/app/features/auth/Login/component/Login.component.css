@@ -1,7 +1,53 @@
-.login-wrap { display: grid; place-items: center; min-height: 70vh; }
-.login-card { background: #fff; border-radius: 20px; padding: 32px; width: 340px; display: grid; gap: 12px; box-shadow: 0 6px 20px rgba(20, 60, 64, .12); }
-.login-card h2 { margin: 0 0 8px; }
-.login-card input { padding: 12px; border: 1px solid #e4ecec; border-radius: 10px; font-size: 16px; }
-.login-card button { padding: 14px; border: 0; border-radius: 12px; background: #43949a; color: #fff; font-size: 16px; cursor: pointer; }
-.login-card button:disabled { opacity: .7; }
-.error { color: #b04040; margin: 0; font-size: 14px; }
+.login-wrap { 
+  display: grid; 
+  place-items: center; 
+  min-height: 70vh; 
+}
+
+.login-card { 
+  background: #fff; 
+  border-radius: 20px; 
+  padding: 32px; 
+  width: 340px; 
+  display: grid; 
+  gap: 12px; 
+  box-shadow: 0 6px 20px rgba(20, 60, 64, .12); 
+}
+
+.login-card h2 { 
+  margin: 0 0 8px; 
+}
+
+/* 1. Grouped input and select together to share the exact same style */
+.login-card input, 
+.login-card select { 
+  padding: 12px; 
+  border: 1px solid #e4ecec; 
+  border-radius: 10px; 
+  font-size: 16px; 
+  width: 100%;          /* Ensures they stretch to the exact same full width */
+  box-sizing: border-box; /* Prevents padding from causing layout clipping */
+  background-color: #fff; /* Fixes browser default gray backgrounds on select items */
+}
+
+.login-card button { 
+  padding: 14px; 
+  border: 0; 
+  border-radius: 12px; 
+  background: #43949a; 
+  color: #fff; 
+  font-size: 16px; 
+  cursor: pointer; 
+}
+
+.login-card button:disabled { 
+  opacity: .7; 
+}
+
+/* 2. Added your error-msg class styling to match your original error configuration */
+.error,
+.error-msg { 
+  color: #b04040; 
+  margin: 0; 
+  font-size: 14px; 
+}

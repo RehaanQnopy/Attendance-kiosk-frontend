@@ -1,4 +1,5 @@
 import { Component } from '@angular/core';
+import { Router } from '@angular/router';
 import { LoginService } from './features/auth/Login/service/Login.service';
 
 @Component({
@@ -7,5 +8,11 @@ import { LoginService } from './features/auth/Login/service/Login.service';
   styleUrls: ['./app.component.css']
 })
 export class AppComponent {
-  constructor(public loginService: LoginService) {}
+  constructor(public loginService: LoginService, private route: Router) {}
+
+  isLoginPage(): boolean {
+    return this.route.url === '/login';
+    
+  }
+
 }

@@ -1,7 +1,7 @@
 <app-header *ngIf="loginService.currUser"></app-header>
 
 <main class="app-body">
-  <side-navigator *ngIf="loginService.currUser" class="app-nav"></side-navigator>
+  <side-navigator *ngIf="loginService.currUser && !isLoginPage()" class="app-nav"></side-navigator>
 
   <section class="app-content">
     <router-outlet></router-outlet>

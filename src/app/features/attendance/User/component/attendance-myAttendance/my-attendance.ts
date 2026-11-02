@@ -3,7 +3,7 @@ import { Workbook } from 'exceljs';
 
 import { AttendanceMonth } from '../../models/Attendance-page';
 import {
-    ATTENDANCE_COLUMNS, AttendanceRow, DayStatus, FULL_DAY_MIN, STATUS_LABEL
+  ATTENDANCE_COLUMNS, AttendanceRow, DayStatus, FULL_DAY_MIN, STATUS_LABEL
 } from '../../models/AttendanceRow';
 import { DayEntry } from '../../models/DayEntry';
 import { AttendancePageService } from '../../service/Attendance-Page/attendance-page.service';
@@ -42,7 +42,6 @@ const EXCEL_MIME = 'application/vnd.openxmlformats-officedocument.spreadsheetml.
   styleUrls: ['./my-attendance.css']
 })
 export class MyAttendanceComponent implements OnInit {
-
 
 //~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~//
 //  🗃  1 · STATE                                                                //

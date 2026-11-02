@@ -40,42 +40,42 @@ export class AttendancePageService {
   constructor(private http: HttpClient) {}
 
   getMonth(monthAndYearKey: string): Observable<AttendanceMonth> {
-    if (environment.skipAuth) return this.reply(this.fakeMonth(monthAndYearKey));
-    return this.http.get<AttendanceMonth>(`${this.baseUrl}/months/${monthAndYearKey}`, this.opts).pipe((catchError(err => {
+    // if (environment.skipAuth) return this.reply(this.fakeMonth(monthAndYearKey));
+    return this.http.get<AttendanceMonth>(`${this.baseUrl}/month/${monthAndYearKey}`, this.opts).pipe((catchError(err => {
         console.error(`Error in fetching the user's month data from the backend`);
         throw new Error(`Error in fetching the user's month data from the backend`);
     })));
   }
 
   clockIn(): Observable<AttendanceMonth> {
-    if (environment.skipAuth) {
-      const { monthAndYearKey, day } = this.istToday();
-      const month = this.fakeMonth(monthAndYearKey);
-      if (month.days[String(day)]) return this.fail('Already clocked in today');
-      month.days[String(day)] = {
-        type: 'work', inTime: new Date().toISOString(), outTime: null, totalDurationMin: null
-      };
-      return this.reply(month);
-    }
+    // if (environment.skipAuth) {
+    //   const { monthAndYearKey, day } = this.istToday();
+    //   const month = this.fakeMonth(monthAndYearKey);
+    //   if (month.days[String(day)]) return this.fail('Already clocked in today');
+    //   month.days[String(day)] = {
+    //     type: 'work', inTime: new Date().toISOString(), outTime: null, totalDurationMin: null
+    //   };
+    //   return this.reply(month);
+    // }
     return this.http.post<AttendanceMonth>(`${this.baseUrl}/clock-in`, {}, this.opts);
   }
 
   clockOut(): Observable<AttendanceMonth> {
-    if (environment.skipAuth) {
-      const { monthAndYearKey, day } = this.istToday();
-      const month = this.fakeMonth(monthAndYearKey);
-      const entry = month.days[String(day)];
-      if (!entry) return this.fail('Not clocked in today');
-      if (entry.outTime) return this.fail('Already clocked out today');
+    // if (environment.skipAuth) {
+    //   const { monthAndYearKey, day } = this.istToday();
+    //   const month = this.fakeMonth(monthAndYearKey);
+    //   const entry = month.days[String(day)];
+    //   if (!entry) return this.fail('Not clocked in today');
+    //   if (entry.outTime) return this.fail('Already clocked out today');
 
-      const now = new Date();
-      const minutes = Math.floor((now.getTime() - new Date(entry.inTime!).getTime()) / 60000);
-      entry.outTime = now.toISOString();
-      entry.totalDurationMin = minutes;
-      if (minutes >= 480) month.summary.fullDays++; else month.summary.shortDays++;
-      month.summary.totalMin += minutes;
-      return this.reply(month);
-    }
+    //   const now = new Date();
+    //   const minutes = Math.floor((now.getTime() - new Date(entry.inTime!).getTime()) / 60000);
+    //   entry.outTime = now.toISOString();
+    //   entry.totalDurationMin = minutes;
+    //   if (minutes >= 480) month.summary.fullDays++; else month.summary.shortDays++;
+    //   month.summary.totalMin += minutes;
+    //   return this.reply(month);
+    // }
     return this.http.post<AttendanceMonth>(`${this.baseUrl}/clock-out`, {}, this.opts);
   }
 

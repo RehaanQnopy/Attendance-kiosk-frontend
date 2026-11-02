@@ -17,7 +17,8 @@ export class LoginPage {
     //Validator.required ensures that, the field is not empty and Validator.email is an in-built feature
     //which validates that the email written by user is of proper syntax,
     //Validators, are written in [] brackets we can add further Validators also if required
-    email: new FormControl('', [Validators.required, Validators.email])
+    email: new FormControl('', [Validators.required, Validators.email]),
+    role: new FormControl('', [Validators.required])
   });
 
   constructor(private loginService: LoginService, private router: Router) {}
@@ -28,10 +29,10 @@ export class LoginPage {
       this.errorMessage = 'Enter a valid email to log in.';
       return;
     }
-    this.login(this.loginForm.value.email?.trim().toLowerCase());
+    this.login(this.loginForm.value.email?.trim().toLowerCase(), this.loginForm.value.role?.trim().toLowerCase());
   }
 
-  public login(email: string): void {
+  public login(email: string, role: string): void {
     this.loading = true;
     this.errorMessage = '';
 
@@ -41,8 +42,8 @@ export class LoginPage {
         const roles = (user.role ?? []).map(r => r.toUpperCase());
 
         //Always prefer using includes instead od exact matching the string
-        if (roles.includes('MANAGER'))       this.router.navigate(['/attendance/manager']);
-        else if (roles.includes('EMPLOYEE')) this.router.navigate(['/attendance']);
+        if (role.toUpperCase() === 'MANAGER' && roles.includes('MANAGER'))       this.router.navigate(['/manager']);
+        else if (role.toUpperCase() === 'EMPLOYEE' && roles.includes('EMPLOYEE')) this.router.navigate(['/attendance']);
         else {
              this.loginService.currUser = null;
              this.errorMessage = 'No role is assigned to this account.';

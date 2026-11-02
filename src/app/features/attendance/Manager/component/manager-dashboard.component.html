@@ -1,0 +1,168 @@
+<div class="shell">
+
+  <!-- ================= SIDE NAVIGATION ================= -->
+  <nav class="sidenav" aria-label="Main navigation">
+    <div class="brand">
+      <b>Advance</b>
+      <small>Manager portal</small>
+    </div>
+
+    <button type="button" class="nav-item" [class.active]="view === 'home'" (click)="setView('home')">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3.5 11 12 4l8.5 7M6 9.5V20h12V9.5"/></svg>
+      <span>Home</span>
+    </button>
+
+    <button type="button" class="nav-item" [class.active]="view === 'leave'" (click)="setView('leave')">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3.5" y="5" width="17" height="15" rx="3"/><path d="M3.5 10h17M8 3v4M16 3v4"/></svg>
+      <span>Leave</span>
+      <span class="badge" *ngIf="pendingCount" [attr.aria-label]="pendingCount + ' pending requests'">{{ pendingCount }}</span>
+    </button>
+  </nav>
+
+  <!-- ================= CONTENT ================= -->
+  <div class="content">
+
+    <!-- ################ HOME ################ -->
+    <ng-container *ngIf="view === 'home'">
+
+      <header class="greet">
+        <h1>Today’s attendance</h1>
+        <p>Clock-in and clock-out for everyone · {{ today | date:'EEEE, d MMMM yyyy' }}</p>
+      </header>
+
+      <section class="stat-row" aria-label="Attendance summary">
+        <article class="stat">
+          <span class="stat__icon ic-green">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="8" r="3.5"/><path d="M5 20c0-3.6 3-6 7-6s7 2.4 7 6"/></svg>
+          </span>
+          <div><span class="stat__label">Present</span><strong>{{ presentCount }}</strong></div>
+        </article>
+
+        <article class="stat">
+          <span class="stat__icon ic-amber">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="8.5"/><path d="M12 7.5V12l3 2"/></svg>
+          </span>
+          <div><span class="stat__label">Late arrivals</span><strong>{{ lateCount }}</strong></div>
+        </article>
+
+        <article class="stat">
+          <span class="stat__icon ic-teal">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3.5" y="5" width="17" height="15" rx="3"/><path d="M3.5 10h17M8 3v4M16 3v4"/></svg>
+          </span>
+          <div><span class="stat__label">On leave</span><strong>{{ leaveCount }}</strong></div>
+        </article>
+
+        <article class="stat">
+          <span class="stat__icon ic-rose">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="8.5"/><path d="m9 9 6 6M15 9l-6 6"/></svg>
+          </span>
+          <div><span class="stat__label">Absent</span><strong>{{ absentCount }}</strong></div>
+        </article>
+      </section>
+
+      <article class="card">
+        <h3>
+          Employee clock-in &amp; clock-out
+          <span class="tools">
+            <input type="search" placeholder="Search employee" aria-label="Search employee"
+       [value]="search" (input)="onSearch($event)">
+            <select aria-label="Filter by status" (change)="onFilter($event)">
+              <option value="all">All</option>
+              <option value="working">Working</option>
+              <option value="clockedOut">Clocked out</option>
+              <option value="late">Late</option>
+              <option value="leave">On leave</option>
+              <option value="absent">Absent</option>
+            </select>
+          </span>
+        </h3>
+
+        <div class="scroll-x">
+          <table class="tbl">
+            <thead>
+              <tr><th>Employee</th><th>Clock in</th><th>Clock out</th><th>Hours</th><th>Status</th></tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let e of filteredRows; trackBy: trackById">
+                <td>
+                  <div class="person">
+                    <span class="av">{{ initials(e.name) }}</span>
+                    <div class="who"><b>{{ e.name }}</b><small>{{ e.role }}</small></div>
+                  </div>
+                </td>
+                <td class="num">{{ (e.inTime | date:'shortTime') || '--:--' }}</td>
+                <td class="num">
+                  <span *ngIf="e.outTime">{{ e.outTime | date:'shortTime' }}</span>
+                  <span class="muted" *ngIf="!e.outTime">{{ isWorking(e) ? 'Still working' : '--:--' }}</span>
+                </td>
+                <td class="num">{{ hoursWorked(e) }}</td>
+                <td>
+                  <span class="pill" [ngClass]="statusClass(e)">{{ statusLabel(e) }}</span>
+                  <span class="pill warn" *ngIf="isLate(e)">Late</span>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <p class="empty" *ngIf="!filteredRows.length">No employees match your search.</p>
+      </article>
+    </ng-container>
+
+    <!-- ################ LEAVE ################ -->
+    <ng-container *ngIf="view === 'leave'">
+
+      <header class="greet">
+        <h1>Leave requests</h1>
+        <p>{{ pendingCount }} request{{ pendingCount === 1 ? '' : 's' }} waiting for your decision.</p>
+      </header>
+
+      <article class="card">
+        <div class="tabs" role="tablist">
+          <button type="button" role="tab" class="tab" *ngFor="let t of leaveTabs"
+                  [class.active]="leaveTab === t" [attr.aria-selected]="leaveTab === t"
+                  (click)="leaveTab = t">
+            {{ t }} ({{ countByStatus(t) }})
+          </button>
+        </div>
+
+        <div class="scroll-x">
+          <table class="tbl">
+            <thead>
+              <tr><th>Employee</th><th>Type</th><th>Dates</th><th>Days</th><th>Reason</th><th>Status</th><th></th></tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let l of visibleLeaves; trackBy: trackById">
+                <td>
+                  <div class="person">
+                    <span class="av">{{ initials(l.empName) }}</span>
+                    <div class="who"><b>{{ l.empName }}</b><small>{{ l.role }}</small></div>
+                  </div>
+                </td>
+                <td>{{ l.type }}</td>
+                <td>
+                  {{ l.from | date:'d MMM' }}
+                  <ng-container *ngIf="leaveDays(l) > 1">– {{ l.to | date:'d MMM' }}</ng-container>
+                </td>
+                <td>{{ leaveDays(l) }}</td>
+                <td class="reason">{{ l.reason }}</td>
+                <td>
+                  <span class="pill" [ngClass]="{ warn: l.status === 'Pending', ok: l.status === 'Approved', bad: l.status === 'Rejected' }">{{ l.status }}</span>
+                </td>
+                <td class="actions">
+                  <ng-container *ngIf="l.status === 'Pending'">
+                    <button type="button" class="act approve" (click)="onApprove(l)">Approve</button>
+                    <button type="button" class="act reject" (click)="onReject(l)">Reject</button>
+                  </ng-container>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <p class="empty" *ngIf="!visibleLeaves.length">No {{ leaveTab.toLowerCase() }} requests.</p>
+      </article>
+    </ng-container>
+
+  </div>
+</div>

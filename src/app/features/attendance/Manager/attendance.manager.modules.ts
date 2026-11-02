@@ -1,20 +1,15 @@
 import { CommonModule } from "@angular/common";
 import { NgModule } from "@angular/core";
-import { RouterModule, Routes } from "@angular/router";
-import { ManagerAttendanceSheetComponent } from "./component/attendance-sheet.component";
+import { ManagerRoutingModule } from "./attendance-routing.manager.module";
+import { ManagerDashboardComponent } from "./component/manager-dashboard.component";
 
-const routes: Routes = [
-    {path: '', component: ManagerAttendanceSheetComponent }
-];
 @NgModule({
-    declarations: [ManagerAttendanceSheetComponent],
+    declarations: [ManagerDashboardComponent],
     imports: 
     [
         CommonModule,
-        RouterModule.forChild(routes)
+        ManagerRoutingModule
 
-    ],
-    exports:[ManagerAttendanceSheetComponent]
-
+    ]
 })
 export class ManagerModule {};
