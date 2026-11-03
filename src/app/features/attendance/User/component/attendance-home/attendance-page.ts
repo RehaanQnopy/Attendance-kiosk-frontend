@@ -70,6 +70,8 @@ export class AttendancePageComponent implements OnInit, OnDestroy {
 
   // ui state
   elapsed = '00:00:00';
+  //the below varibale is used for disabling the clock in and clock out buttons while the 
+  // backend is processing the request
   busy = false;
   error = '';
   private timer?: any;

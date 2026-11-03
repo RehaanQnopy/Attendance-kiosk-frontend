@@ -9,16 +9,20 @@ import { LoginService } from 'src/app/features/auth/Login/service/Login.service'
 })
 export class SideNavigationComponent {
 
-    active = 'attendance';
+    //The below variable is used to highlight the active link in the side navigation bar.
+    active = '';
 
     constructor(private router: Router, public loginService: LoginService){};
 
     MyAttendance() {
-        this.active='myAttendance';
+        this.active='attendance';
         this.router.navigate(['/attendance/myAttendance'])
     };
-    MarkLeave() {};
+    MarkLeave() {
+        this.active='markLeave';
+    };
     Home() {
+        this.active='home';
         this.router.navigate(['/attendance/']);
     };
     Manager() {

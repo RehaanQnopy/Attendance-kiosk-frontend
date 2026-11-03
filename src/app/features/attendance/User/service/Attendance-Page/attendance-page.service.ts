@@ -42,7 +42,7 @@ export class AttendancePageService {
   getMonth(monthAndYearKey: string): Observable<AttendanceMonth> {
     // if (environment.skipAuth) return this.reply(this.fakeMonth(monthAndYearKey));
     return this.http.get<AttendanceMonth>(`${this.baseUrl}/month/${monthAndYearKey}`, this.opts).pipe((catchError(err => {
-        console.error(`Error in fetching the user's month data from the backend`);
+        console.error(`[getMonth from Attendance-page.service]: Error in fetching the user's month data from the backend`);
         throw new Error(`Error in fetching the user's month data from the backend`);
     })));
   }
