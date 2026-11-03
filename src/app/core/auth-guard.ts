@@ -6,6 +6,8 @@ import { LoginService } from '../features/auth/Login/service/Login.service';
 export class AuthGuard implements CanActivate {
   constructor(private loginService: LoginService, private router: Router) {}
 
+// If the currUser is not null, then the user is logged in and can access the route. 
+// Otherwise, redirect to the login page.
   canActivate(): boolean | UrlTree {
     return this.loginService.currUser ? true : this.router.createUrlTree(['/login']);
   }

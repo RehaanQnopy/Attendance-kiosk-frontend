@@ -1,47 +1,42 @@
 :host {
   --teal: #43949a;
   --teal-deep: #2f7a80;
-  --ink: #1d2b2e;
   --muted: #7b8b8e;
   --line: #e4ecec;
   --page: #f6f9f9;
-  --mint: #eafbe9;
-  --green: #5aa66e;
-  --amber: #e0a64a;
   --rose: #c07a7a;
+  --green: #3d8a5a;
+  --ink: #1f2d2f;
+
   display: block;
+  flex: 1;
+  min-width: 0;
+  /* viewport minus the header = exactly one screen, no page scroll */
+  height: calc(100vh - var(--header-h, 58px));
   font-family: Roboto, "Helvetica Neue", Arial, sans-serif;
-  color: var(--ink);
 }
 
-/* ---------- shell: side nav + content ---------- */
-.shell { display: grid; grid-template-columns: 232px minmax(0, 1fr); min-height: 100vh; background: var(--page); }
-.content { display: grid; gap: 20px; align-content: start; padding: 24px; min-width: 0; }
+/* ---------- page area ---------- */
+.shell { height: 100%; background: var(--page); }
 
-@media (max-width: 800px) {
-  .shell { grid-template-columns: 1fr; }
-  .content { padding: 16px; gap: 16px; }
+.content {
+  height: 100%;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  padding: 24px;
+  min-width: 0;
+  overflow: hidden;            /* the page itself never scrolls */
 }
+.content > * { flex: none; }   /* title + stat cards keep their size */
 
-/* ---------- side navigation ---------- */
-.sidenav { background: #fff; border-right: 1px solid var(--line); padding: 20px 14px; display: flex; flex-direction: column; gap: 6px; position: sticky; top: 0; height: 100vh; }
-.brand { padding: 4px 12px 18px; margin-bottom: 8px; border-bottom: 1px solid var(--line); }
-.brand b { display: block; font-size: 18px; font-weight: 600; color: var(--teal-deep); }
-.brand small { color: var(--muted); font-size: 12px; }
-
-.nav-item { display: flex; align-items: center; gap: 12px; width: 100%; padding: 11px 12px; border: 0; border-radius: 12px; background: transparent; color: var(--muted); font: inherit; font-size: 15px; font-weight: 500; text-align: left; cursor: pointer; }
-.nav-item svg { width: 20px; height: 20px; flex: none; fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
-.nav-item:hover { background: var(--page); }
-.nav-item.active { background: #e1f1f2; color: var(--teal-deep); }
-.nav-item:focus-visible, .tab:focus-visible, .act:focus-visible { outline: 3px solid var(--teal); outline-offset: 2px; }
-
-.badge { margin-left: auto; min-width: 22px; height: 22px; padding: 0 7px; border-radius: 11px; background: var(--rose); color: #fff; font-size: 12px; font-weight: 600; display: grid; place-items: center; }
-
-@media (max-width: 800px) {
-  .sidenav { flex-direction: row; align-items: center; height: auto; position: static; padding: 10px 12px; border-right: 0; border-bottom: 1px solid var(--line); overflow-x: auto; }
-  .brand { padding: 0 12px 0 4px; margin: 0; border: 0; }
-  .brand small { display: none; }
-  .nav-item { width: auto; white-space: nowrap; }
+/* the card that holds the table takes the remaining height */
+.content > .card {
+  flex: 1 1 auto;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
 }
 
 /* ---------- greeting ---------- */
@@ -50,7 +45,7 @@
 
 /* ---------- card ---------- */
 .card { background: #fff; border: 1px solid var(--line); border-radius: 16px; padding: 20px; box-shadow: 0 2px 8px rgba(20, 60, 64, .05); min-width: 0; }
-.card h3 { margin: 0 0 14px; font-size: 16px; font-weight: 600; display: flex; justify-content: space-between; align-items: center; gap: 10px; flex-wrap: wrap; }
+.card h3 { margin: 0 0 14px; font-size: 16px; font-weight: 600; display: flex; justify-content: space-between; align-items: center; gap: 10px; flex-wrap: wrap; flex: none; }
 
 /* ---------- stat row ---------- */
 .stat-row { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 16px; }
@@ -73,15 +68,23 @@
 .tools input { min-width: 180px; }
 .tools input:focus-visible, .tools select:focus-visible { outline: 3px solid var(--teal); outline-offset: 1px; }
 
-/* ---------- table ---------- */
-.scroll-x { overflow-x: auto; }
+/* ---------- table (only this area scrolls) ---------- */
+.scroll-x {
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow: auto;              /* vertical + horizontal */
+}
 .tbl { width: 100%; border-collapse: collapse; font-size: 14px; }
-.tbl th { text-align: left; font-weight: 500; color: var(--muted); padding: 10px 8px; background: #f5f9f9; white-space: nowrap; }
+.tbl th {
+  position: sticky; top: 0; z-index: 1;   /* header stays visible while rows scroll */
+  text-align: left; font-weight: 500; color: var(--muted);
+  padding: 10px 8px; background: #f5f9f9; white-space: nowrap;
+}
 .tbl td { padding: 12px 8px; border-top: 1px solid var(--line); white-space: nowrap; }
 .num { font-variant-numeric: tabular-nums; }
 .muted { color: var(--muted); }
 .reason { white-space: normal; min-width: 180px; }
-.empty { margin: 0; padding: 28px 0 8px; text-align: center; color: var(--muted); font-size: 14px; }
+.empty { margin: 0; padding: 28px 0 8px; text-align: center; color: var(--muted); font-size: 14px; flex: none; }
 
 /* ---------- person cell ---------- */
 .person { display: flex; align-items: center; gap: 12px; }
@@ -99,7 +102,7 @@
 .pill.idle { background: #eef2f2; color: var(--muted); }
 
 /* ---------- leave tabs + actions ---------- */
-.tabs { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 14px; }
+.tabs { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 14px; flex: none; }
 .tab { border: 1px solid var(--line); background: #fff; color: var(--muted); border-radius: 20px; padding: 6px 14px; font: inherit; font-size: 14px; font-weight: 500; cursor: pointer; }
 .tab.active { background: #e1f1f2; color: var(--teal-deep); border-color: transparent; }
 
@@ -108,3 +111,12 @@
 .act.approve { background: #e6f4ea; color: var(--green); }
 .act.reject  { background: #f7e9e9; color: var(--rose); }
 .act:hover { filter: brightness(.97); }
+
+/* ---------- small screens: let the page scroll normally ---------- */
+@media (max-width: 800px) {
+  :host { height: auto; }
+  .shell, .content { height: auto; overflow: visible; }
+  .content { padding: 16px; gap: 16px; }
+  .content > .card { display: block; }
+  .scroll-x { overflow-x: auto; }
+}

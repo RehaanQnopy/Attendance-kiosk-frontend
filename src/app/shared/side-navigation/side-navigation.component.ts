@@ -11,23 +11,48 @@ export class SideNavigationComponent {
 
     //The below variable is used to highlight the active link in the side navigation bar.
     active = '';
+    //The below varibale is for 
+    employeeBlockOpen = false;
 
-    constructor(private router: Router, public loginService: LoginService){};
+    constructor(private route: Router, public loginService: LoginService){};
 
     MyAttendance() {
         this.active='attendance';
-        this.router.navigate(['/attendance/myAttendance'])
+        this.route.navigate(['/attendance/myAttendance'])
     };
-    MarkLeave() {
-        this.active='markLeave';
+    LogOut() {
+        this.active='leave';
+        this.route.navigate(['/'])
     };
     Home() {
         this.active='home';
-        this.router.navigate(['/attendance/']);
+        if(this.route.url.includes('/manager')) {
+            this.route.navigate(['/manager']);
+        }
+        else if(this.route.url.includes('/attendance')) {
+            this.route.navigate(['/attendance']);
+        }
+        else {
+            this.route.navigate(['/']);
+        }
     };
     Manager() {
         this.active = 'manager';
-        this.router.navigate(['/attendance/manager']);
+        this.route.navigate(['/attendance/manager']);
+    }
+    MarkLeave() {
+        this.active = 'markLeave';
+        this.route.navigate(['/attendance/markLeave']);
+    }
+    EmployeeAttendance() {
+        this.active = 'emp-attendance';
+        this.route.navigate(['/attendance/manager/employeeAttendance']);
+    }
+    get isManager(): Boolean {
+    return this.route.url.includes('/manager') || this.loginService.hasRole('manager');
     }
 
+    toggleEmployee() {
+        this.employeeBlockOpen = !this.employeeBlockOpen;
+    }
 }

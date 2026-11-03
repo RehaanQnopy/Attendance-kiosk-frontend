@@ -12,4 +12,5 @@ body {
   font-family: Roboto, "Helvetica Neue", sans-serif;
   background-color: #f6f9f9; /* page is light now; only the side nav is cyan. Use #fff for pure white */
 }
+:root { --header-h: 58px; }
 

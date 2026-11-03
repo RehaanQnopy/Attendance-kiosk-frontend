@@ -14,5 +14,8 @@ export class AppComponent {
     return this.route.url === '/login';
     
   }
+  get showChrome(): boolean {
+  return !!this.loginService.currUser && !this.isLoginPage();
+}
 
 }

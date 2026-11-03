@@ -1,51 +1,58 @@
-/* Cyan strip attached to the left edge; the page behind it stays white */
 :host {
-  display: flex;          /* stretches the strip to the height of the page body */
+  /* ...keep the variables... */
+  display: flex;
   flex: none;
+  align-self: flex-start;
+  height: calc(100vh - var(--header-h, 58px));   /* replaces min-height */
+  font-family: Roboto, "Helvetica Neue", Arial, sans-serif;
 }
 
-.side-nav {
-  width: 88px;
+/* .side-nav {
+  width: 232px;
   flex: 1;
-  background: #43949a;
-  border-radius: 0 20px 20px 0;
-  box-shadow: 4px 0 20px rgba(20, 60, 64, .12);
-  padding: 16px 0;
+  background: #fff;
+  border-right: 1px solid var(--line);
+  padding: 20px 14px;
   display: flex;
   flex-direction: column;
-  align-items: stretch;
-  gap: 8px;
-  font-family: Roboto, "Helvetica Neue", Arial, sans-serif;
+  gap: 6px;
+} */
+ .side-nav { min-height: 0; overflow-y: auto; }
+
+.portal-label {
+  padding: 4px 12px 14px;
+  margin-bottom: 8px;
+  border-bottom: 1px solid var(--line);
+  color: var(--muted);
+  font-size: 12px;
+  font-weight: 500;
+  letter-spacing: .04em;
+  text-transform: uppercase;
 }
 
 .side-nav__menu { display: flex; flex-direction: column; gap: 6px; }
 
 .nav-item {
-  position: relative;
   display: flex;
-  flex-direction: column;
   align-items: center;
-  gap: 6px;
-  padding: 10px 4px;
+  gap: 12px;
+  width: 100%;
+  padding: 11px 12px;
   border: 0;
+  border-radius: 12px;
   background: transparent;
-  color: rgba(255, 255, 255, .78);
-  cursor: pointer;
+  color: var(--muted);
   font: inherit;
+  font-size: 15px;
+  font-weight: 500;
+  text-align: left;
+  cursor: pointer;
 }
 
-.nav-item__icon {
-  width: 44px;
-  height: 44px;
-  border-radius: 14px;
-  display: grid;
-  place-items: center;
-  transition: background .15s, color .15s;
-}
-
-.nav-item__icon svg {
-  width: 22px;
-  height: 22px;
+.nav-item svg {
+  width: 20px;
+  height: 20px;
+  flex: none;
   fill: none;
   stroke: currentColor;
   stroke-width: 1.8;
@@ -53,32 +60,68 @@
   stroke-linejoin: round;
 }
 
-.nav-item__label { font-size: 12px; line-height: 1.2; text-align: center; }
+.nav-item:hover { background: var(--page); }
+.nav-item.active { background: #e1f1f2; color: var(--teal-deep); }
+.nav-item:focus-visible { outline: 3px solid var(--teal); outline-offset: 2px; }
 
-.nav-item:hover { color: #fff; }
-.nav-item:hover .nav-item__icon { background: rgba(255, 255, 255, .14); }
-
-/* active page: white icon tile plus a bar on the left boundary */
-.nav-item.active { color: #fff; font-weight: 500; }
-.nav-item.active .nav-item__icon { background: #fff; color: #2f7a80; }
-.nav-item.active::before {
-  content: "";
-  position: absolute;
-  left: 0;
-  top: 12px;
-  bottom: 12px;
-  width: 4px;
-  border-radius: 0 4px 4px 0;
-  background: #fff;
+.badge {
+  margin-left: auto;
+  min-width: 22px;
+  height: 22px;
+  padding: 0 7px;
+  border-radius: 11px;
+  background: var(--rose);
+  color: #fff;
+  font-size: 12px;
+  font-weight: 600;
+  display: grid;
+  place-items: center;
 }
 
-.nav-item:focus-visible { outline: 3px solid #fff; outline-offset: -3px; border-radius: 12px; }
-
-/* slots are hidden when empty so they never leave gaps */
 .side-nav__slot:empty { display: none; }
-.side-nav__slot { padding: 0 8px; }
+.side-nav__slot { padding: 0 4px; }
 
-@media (max-width: 700px) {
-  .side-nav { width: 64px; }
-  .nav-item__label { display: none; }
+/* ===== NEW: Employee dropdown ===== */
+.nav-item--parent .chevron {
+  margin-left: auto;
+  width: 18px;
+  height: 18px;
+  transition: transform .2s ease;
+}
+.nav-item--parent.open .chevron { transform: rotate(180deg); }
+
+.submenu {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  margin-left: 20px;
+  padding-left: 12px;
+  border-left: 1px solid var(--line);
+}
+.nav-item--sub { padding: 9px 12px; font-size: 14px; }
+
+/* ===== NEW: Leave pinned at the bottom ===== */
+.side-nav__footer {
+  margin-top: auto;
+  padding-top: 10px;
+  border-top: 1px solid var(--line);
+}
+
+@media (max-width: auto) {
+  :host { display: block; align-self: auto; min-height: 0; }
+  .side-nav {
+    width: auto;
+    flex-direction: row;
+    align-items: center;
+    padding: 10px 12px;
+    border-right: 0;
+    border-bottom: 1px solid var(--line);
+    overflow-x: auto;
+  }
+  .portal-label { display: none; }
+  .side-nav__menu { flex-direction: row; }
+  .nav-item { width: auto; white-space: nowrap; }
+  .side-nav__slot { display: none; }
+  .submenu { display: none; }
+  .side-nav__footer { margin-top: 0; padding-top: 0; border-top: 0; }
 }

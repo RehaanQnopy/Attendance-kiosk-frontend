@@ -33,6 +33,9 @@ isUserValid(email: string): Observable<SessionUser> {
   // }
 
   return this.http
+  //okay one important thing here { email } is sent as an object its a short hand for { email: email } 
+  // and the backend expects the email to be sent as an object with key as email and value as the 
+  // email address which is filled by user itself.
     .post<SessionUser>(`${this.apiUrl}/user`, { email }, { withCredentials: true })
     .pipe(
       tap(user => (this.currUser = user)),
