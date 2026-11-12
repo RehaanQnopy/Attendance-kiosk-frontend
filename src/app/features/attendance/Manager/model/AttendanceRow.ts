@@ -1,8 +1,8 @@
+
 export interface AttendanceRow {
-  id: number;
+  id: string;
   name: string;
-  role: string;
-  state: 'present' | 'leave' | 'absent';
+  state: string;
   inTime: Date | null;   // pass to the `date` pipe
   outTime: Date | null;  // null while still working
 }

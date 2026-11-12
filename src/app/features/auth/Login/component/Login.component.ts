@@ -42,7 +42,7 @@ export class LoginPage {
         const roles = (user.role ?? []).map(r => r.toUpperCase());
 
         //Always prefer using includes instead od exact matching the string
-        if (role.toUpperCase() === 'MANAGER' && roles.includes('MANAGER'))       this.router.navigate(['/manager']);
+        if (role.toUpperCase() === 'MANAGER' && roles.includes('MANAGER'))this.router.navigate(['/manager']);
         else if (role.toUpperCase() === 'EMPLOYEE' && roles.includes('EMPLOYEE')) this.router.navigate(['/attendance']);
         else {
              this.loginService.currUser = null;

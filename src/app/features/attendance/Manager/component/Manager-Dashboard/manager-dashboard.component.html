@@ -46,8 +46,8 @@
           Employee clock-in &amp; clock-out
           <span class="tools">
             <input type="search" placeholder="Search employee" aria-label="Search employee"
-       [value]="search" (input)="onSearch($event)">
-            <select aria-label="Filter by status" (change)="onFilter($event)">
+                   [value]="search" (input)="onSearch($event)">
+            <select aria-label="Filter by status" [value]="statusFilter" (change)="onFilter($event)">
               <option value="all">All</option>
               <option value="working">Working</option>
               <option value="clockedOut">Clocked out</option>
@@ -58,35 +58,48 @@
           </span>
         </h3>
 
-        <div class="scroll-x">
-          <table class="tbl">
-            <thead>
-              <tr><th>Employee</th><th>Clock in</th><th>Clock out</th><th>Hours</th><th>Status</th></tr>
-            </thead>
-            <tbody>
-              <tr *ngFor="let e of filteredRows; trackBy: trackById">
-                <td>
-                  <div class="person">
-                    <span class="av">{{ initials(e.name) }}</span>
-                    <div class="who"><b>{{ e.name }}</b><small>{{ e.role }}</small></div>
-                  </div>
-                </td>
-                <td class="num">{{ (e.inTime | date:'shortTime') || '--:--' }}</td>
-                <td class="num">
-                  <span *ngIf="e.outTime">{{ e.outTime | date:'shortTime' }}</span>
-                  <span class="muted" *ngIf="!e.outTime">{{ isWorking(e) ? 'Still working' : '--:--' }}</span>
-                </td>
-                <td class="num">{{ hoursWorked(e) }}</td>
-                <td>
-                  <span class="pill" [ngClass]="statusClass(e)">{{ statusLabel(e) }}</span>
-                  <span class="pill warn" *ngIf="isLate(e)">Late</span>
-                </td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
+        <!-- Loading -->
+        <p class="empty" *ngIf="loading">Loading attendance...</p>
 
-        <p class="empty" *ngIf="!filteredRows.length">No employees match your search.</p>
+        <!-- Error -->
+        <p class="empty error" *ngIf="!loading && errorMsg">
+          {{ errorMsg }}
+          <button type="button" class="act approve" (click)="loadAttendance()">Retry</button>
+        </p>
+
+        <!-- Table: only when data loaded successfully -->
+        <ng-container *ngIf="!loading && !errorMsg">
+          <div class="scroll-x">
+            <table class="tbl">
+              <thead>
+                <tr><th>Employee</th><th>Clock in</th><th>Clock out</th><th>Hours</th><th>Status</th></tr>
+              </thead>
+              <tbody>
+                <tr *ngFor="let e of filteredRows; trackBy: trackById">
+                  <td>
+                    <div class="person">
+                      <span class="av">{{ initials(e.name) }}</span>
+                       <div class="who"><b>{{ e.name }}</b></div>
+                    </div>
+                  </td>
+                  <td class="num">{{ (e.inTime | date:'shortTime') || '--:--' }}</td>
+                  <td class="num">
+                    <span *ngIf="e.outTime">{{ e.outTime | date:'shortTime' }}</span>
+                    <span class="muted" *ngIf="!e.outTime">{{ isWorking(e) ? 'Still working' : '--:--' }}</span>
+                  </td>
+                  <td class="num">{{ hoursWorked(e) }}</td>
+                  <td>
+                    <span class="pill" [ngClass]="statusClass(e)">{{ statusLabel(e) }}</span>
+                    <span class="pill warn" *ngIf="isLate(e)">Late</span>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <p class="empty" *ngIf="!attendance.length">No attendance records for today.</p>
+          <p class="empty" *ngIf="attendance.length && !filteredRows.length">No employees match your search.</p>
+        </ng-container>
       </article>
     </ng-container>
 
@@ -113,7 +126,7 @@
               <tr><th>Employee</th><th>Type</th><th>Dates</th><th>Days</th><th>Reason</th><th>Status</th><th></th></tr>
             </thead>
             <tbody>
-              <tr *ngFor="let l of visibleLeaves; trackBy: trackById">
+              <!-- <tr *ngFor="let l of visibleLeaves; trackBy: trackByLeave">
                 <td>
                   <div class="person">
                     <span class="av">{{ initials(l.empName) }}</span>
@@ -136,7 +149,7 @@
                     <button type="button" class="act reject" (click)="onReject(l)">Reject</button>
                   </ng-container>
                 </td>
-              </tr>
+              </tr> -->
             </tbody>
           </table>
         </div>

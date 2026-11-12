@@ -1,6 +1,6 @@
 import { NgModule } from "@angular/core"
 import { RouterModule, Routes } from "@angular/router"
-import { ManagerDashboardComponent } from "./component/manager-dashboard.component"
+import { ManagerDashboardComponent } from "./component/Manager-Dashboard/manager-dashboard.component"
 
 const route:Routes = [
     {path: '', component: ManagerDashboardComponent}
