@@ -22,7 +22,18 @@ export class SideNavigationComponent {
     };
     LogOut() {
         this.active='leave';
-        this.route.navigate(['/'])
+        this.loginService.logout().subscribe({
+            next: () => {
+                localStorage.clear();
+                sessionStorage.clear();
+                this.route.navigate(["/"]);
+            },
+            error: err=> {
+                console.error(`Side-navigation: Error in making the logout call to the backend`,err);
+                return alert('Failed to log out. Please check your connection and try again.');
+            }
+
+        })
     };
     Home() {
         this.active='home';
