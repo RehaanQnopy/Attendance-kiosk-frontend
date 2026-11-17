@@ -1,6 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { catchError, Observable } from 'rxjs';
+import { catchError, map, Observable } from 'rxjs';
+import { ApiResponse } from 'src/app/core/apiResponse';
 import { environment } from 'src/environments/environment';
 import { AttendanceMonth } from '../../models/Attendance-page';
 import { AttendanceRow } from '../../models/AttendanceRow';
@@ -20,11 +21,14 @@ export class AttendancePageService {
   }
 
   getCurrentMonthFullView(monthAndYearKey: string): Observable<AttendanceRow[]> {
-    return this.http.get<AttendanceRow[]>(`${this.baseUrl}/my-attendance/${monthAndYearKey}`, this.opts).pipe((catchError(err => {
-        console.error(`[getCurrentMonthFullView from Attendance-page.service]: Error in fetching the user's month data from the backend`);
-        throw new Error(`Attendance-page.service: ${err.message}`);
-    })));
-  }
+      return this.http.get<ApiResponse<AttendanceRow[]>>(`${this.baseUrl}/my-attendance/${monthAndYearKey}`, this.opts).pipe(
+    map(res => res.data),
+    catchError(err => {
+      // the backend's error body has the same shape, so its message can be reused
+      throw new Error(err.error?.message ?? err.message);
+    })
+  );
+}
 
 
   clockIn(): Observable<AttendanceMonth> {
