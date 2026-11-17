@@ -1,0 +1,26 @@
+//                      The Date and Time Synchornization                           //
+
+1. What Each Piece of 'T00:00:00Z' Means
+
+Suppose your backend API sends r.date = "2026-11-17". Joining the strings builds "2026-11-17T00:00:00Z":
+• 2026-11-17: The calendar date (Year-Month-Day).
+• T: A standard separator character (stands for Time) that separates the date part from the clock part.
+• 00:00:00: The exact clock time in 24-hour format (00 hours, 00 minutes, 00 seconds), which is 12:00 AM midnight.
+• Z: Stands for Zulu time, the international aviation and computing code for UTC (+00:00).
+
+2. Concrete Example: Why Pinning Matters
+
+Imagine two users open your attendance app—one in Pune, India (IST, UTC+5:30) and one in New York, USA (EST, UTC-5:00).
+• When you write new Date("2026-11-17T00:00:00Z"):
+	• Both browsers lock the timestamp to November 17, 2026 at 00:00:00 UTC.
+	• When your code later asks for the UTC weekday ({ timeZone: 'UTC' }), both users see Tuesday, Nov 17.
+• What happens if you pass IST (+05:30) instead:
+	• Suppose you wrote new Date("2026-11-17T00:00:00+05:30") (midnight in India).
+	• Because JavaScript stores every Date internally in UTC, it immediately subtracts 5 hours and 30 minutes to convert IST to UTC.
+	• That timestamp becomes November 16, 2026 at 18:30:00 UTC.
+	• When your next line checks { timeZone: 'UTC' }, the date is now Monday, Nov 16—shifted backward by a full day!
+
+3. Why Not Just Write new Date("2026-11-17") Without 'T00:00:00Z'?
+
+In JavaScript, date-only strings like "2026-11-17" default to UTC, but other formats like "2026/11/17" or "Nov 17, 2026" default to the user's 
+local browser timezone. Explicitly appending 'T00:00:00Z' removes all guesswork and guarantees every browser parses it as exact UTC midnight.

@@ -1,28 +1,11 @@
 import { Component, OnInit } from '@angular/core';
 import { Workbook } from 'exceljs';
-
-import { AttendanceMonth } from '../../models/Attendance-page';
+import { AttendanceRow } from '../../models/AttendanceRow';
 import {
-  ATTENDANCE_COLUMNS, AttendanceRow, DayStatus, FULL_DAY_MIN, STATUS_LABEL
-} from '../../models/AttendanceRow';
-import { DayEntry } from '../../models/DayEntry';
+  ATTENDANCE_COLUMNS, AttendanceRowUser, DayStatus,
+  STATUS_LABEL, toDayStatus
+} from '../../models/AttendanceRowUser';
 import { AttendancePageService } from '../../service/Attendance-Page/attendance-page.service';
-
-/*
-  MAP OF THIS FILE
-    0. Settings ........ Excel colours and file type
-    1. State ........... every field in one place
-    2. Lifecycle ....... page open
-    3. Month buttons ... ‹ › buttons, loading a month, month-key arithmetic
-    4. Rows ............ turn one month from the backend into table rows
-    5. Excel ........... build the .xlsx with exceljs and download it
-    6. Getters ......... values and text formats the html uses
-*/
-
-
-//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~//
-//  ⚙  0 · SETTINGS                                                              //
-//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~//
 
 // Excel wants colours as ARGB text: FF = fully opaque, then the usual RRGGBB.
 const EXCEL_HEADER_FILL = 'FF2F7A80';
@@ -30,7 +13,11 @@ const EXCEL_STATUS_COLOUR: Record<DayStatus, { fill: string; text: string }> = {
   'full-day':    { fill: 'FFEAFBE9', text: 'FF2E7D4F' },
   'short-day':   { fill: 'FFF6E9E9', text: 'FFA24B4B' },
   'leave':       { fill: 'FFE3EEFB', text: 'FF2F5F9E' },
-  'in-progress': { fill: 'FFFBF2E0', text: 'FF8A5F0F' }
+  'in-progress': { fill: 'FFFBF2E0', text: 'FF8A5F0F' },
+  'absent':      { fill: 'FFF6E9E9', text: 'FFA24B4B' },
+  'weekend':     { fill: 'FFF0F0F0', text: 'FF666666' },
+  'holiday':     { fill: 'FFEDE7F6', text: 'FF5E35B1' },
+  'other':       { fill: 'FFF0F0F0', text: 'FF666666' }
 };
 
 // The "this is an .xlsx file" label the browser attaches to the download.
@@ -43,14 +30,10 @@ const EXCEL_MIME = 'application/vnd.openxmlformats-officedocument.spreadsheetml.
 })
 export class MyAttendanceComponent implements OnInit {
 
-//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~//
-//  🗃  1 · STATE                                                                //
-//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~//
-
   readonly columns = ATTENDANCE_COLUMNS;     // drives the table header AND the Excel columns
   readonly statusLabel = STATUS_LABEL;
 
-  rows: AttendanceRow[] = [];
+  rows: AttendanceRowUser[] = [];
   monthKey = '';                                                       // month on screen, '2026-10'
   private readonly currentMonthKey = this.toMonthKey(new Date());      // this month in IST, set once
 
@@ -61,19 +44,12 @@ export class MyAttendanceComponent implements OnInit {
   constructor(private attendanceService: AttendancePageService) {}
 
 
-//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~//
-//  🔌  2 · LIFECYCLE                                                            //
-//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~//
-
   ngOnInit(): void {
     this.loadMonth(this.currentMonthKey);
   }
 
 
-//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~//
-//  ◀ ▶  3 · MONTH BUTTONS  ·  click ‹ or › → fetch that month → rebuild rows     //
-//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~//
-
+  //Month Buttons: Previous and Next
   onPreviousMonth(): void { this.loadMonth(this.shiftMonthKey(this.monthKey, -1)); }
 
   // The html greys this button out on the current month, so a future month can never be asked for.
@@ -88,9 +64,9 @@ export class MyAttendanceComponent implements OnInit {
     this.loading = true;
     this.error = '';
 
-    this.attendanceService.getMonth(key).subscribe({
-      next: m => {
-        this.rows = this.buildRows(m);
+    this.attendanceService.getCurrentMonthFullView(key).subscribe({
+      next: list => {
+        this.rows = this.buildRows(list);
         this.loading = false;
       },
       error: () => {
@@ -120,28 +96,31 @@ export class MyAttendanceComponent implements OnInit {
   }
 
 
-//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~//
-//  🧾  4 · ROWS  ·  one AttendanceMonth in, one row per day out                 //
-//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~//
+  // The backend already sends one row per day for the whole month.
+  // This turns each backend AttendanceRow into the display-ready AttendanceRowUser.
 
-  // Only days that have an entry become rows, oldest first.
-  private buildRows(m: AttendanceMonth): AttendanceRow[] {
-    const [year, month] = m.month.split('-').map(Number);
+  private buildRows(list: AttendanceRow[]): AttendanceRowUser[] {
+  const today = this.todayKey();
+  const rows: AttendanceRowUser[] = [];
 
-    return Object.entries(m.days || {})
-      .sort(([dayA], [dayB]) => Number(dayA) - Number(dayB))
-      .map(([day, entry]) => {
-        const date = new Date(Date.UTC(year, month - 1, Number(day)));
-        return {
-          date,
-          weekday: date.toLocaleDateString('en-GB', { weekday: 'short', timeZone: 'UTC' }),
-          inMin: this.minutesIntoIstDay(entry.inTime),
-          outMin: this.minutesIntoIstDay(entry.outTime),
-          durationMin: entry.outTime ? (entry.totalDurationMin ?? 0) : null,
-          status: this.statusOf(entry)
-        };
-      });
+  for (let i = 0; i < list.length; i++) {
+    const r = list[i];
+    const date = new Date(r.date + 'T00:00:00Z');
+    const status = toDayStatus(r, today);
+
+    rows.push({
+      date,
+      weekday: date.toLocaleDateString('en-GB', { weekday: 'short', timeZone: 'UTC' }),
+      inMin: this.minutesIntoIstDay(r.inTime),
+      outMin: this.minutesIntoIstDay(r.outTime),
+      durationMin: r.outTime ? (r.totalDurationMin ?? 0) : null,
+      status,
+      statusText: status === 'other' ? r.status : STATUS_LABEL[status]
+    });
   }
+  return rows;
+}
+
 
   //  - - - tools used by the rows - - - - - - - - - - - - - - - - - - - - - - - - //
 
@@ -156,14 +135,9 @@ export class MyAttendanceComponent implements OnInit {
     return hour * 60 + minute;
   }
 
-  /*
-    The backend enum is DayType.WORK and serialises as 'WORK', while the fake service
-    writes 'work', so compare in lower case and both work.
-  */
-  private statusOf(entry: DayEntry): DayStatus {
-    if (String(entry.type).toLowerCase() === 'leave') return 'leave';
-    if (!entry.outTime) return 'in-progress';
-    return (entry.totalDurationMin ?? 0) >= FULL_DAY_MIN ? 'full-day' : 'short-day';
+  /** Today as 'YYYY-MM-DD' in IST. */
+  private todayKey(): string {
+    return new Intl.DateTimeFormat('en-CA', { timeZone: 'Asia/Kolkata' }).format(new Date());
   }
 
 
@@ -197,11 +171,11 @@ export class MyAttendanceComponent implements OnInit {
           inMin: r.inMin === null ? null : r.inMin / 1440,
           outMin: r.outMin === null ? null : r.outMin / 1440,
           durationMin: r.durationMin === null ? null : r.durationMin / 1440,
-          status: this.statusLabel[r.status]
+          statusText: r.statusText
         });
 
         const colour = EXCEL_STATUS_COLOUR[r.status];
-        const statusCell = excelRow.getCell('status');
+        const statusCell = excelRow.getCell('statusText');
         statusCell.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: colour.fill } };
         statusCell.font = { bold: true, color: { argb: colour.text } };
       });

@@ -1,3 +1,4 @@
+```html
 <section class="page">
 
   <!-- ===== top bar: title, month switcher, download ===== -->
@@ -41,7 +42,7 @@
             <ng-container *ngSwitchCase="'inMin'">{{ formatClock(r.inMin) }}</ng-container>
             <ng-container *ngSwitchCase="'outMin'">{{ formatClock(r.outMin) }}</ng-container>
             <ng-container *ngSwitchCase="'durationMin'">{{ formatDuration(r.durationMin) }}</ng-container>
-            <span *ngSwitchCase="'status'" class="status" [ngClass]="r.status">{{ statusLabel[r.status] }}</span>
+            <span *ngSwitchCase="'statusText'" class="status" [ngClass]="r.status">{{ r.statusText }}</span>
           </td>
         </tr>
       </tbody>

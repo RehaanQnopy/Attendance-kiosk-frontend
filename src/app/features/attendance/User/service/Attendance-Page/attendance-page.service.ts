@@ -3,14 +3,12 @@ import { Injectable } from '@angular/core';
 import { catchError, Observable } from 'rxjs';
 import { environment } from 'src/environments/environment';
 import { AttendanceMonth } from '../../models/Attendance-page';
+import { AttendanceRow } from '../../models/AttendanceRow';
 
 @Injectable({ providedIn: 'root' })
 export class AttendancePageService {
   private baseUrl = `${environment.baseUrl}/attendance`;
   private opts = { withCredentials: true };
-
-  // in-memory fake database, used only when environment.skipAuth is true
-  private fakeDb = new Map<string, AttendanceMonth>();
 
   constructor(private http: HttpClient) {}
 
@@ -20,6 +18,14 @@ export class AttendancePageService {
         throw new Error(`Error in fetching the user's month data from the backend`);
     })));
   }
+
+  getCurrentMonthFullView(monthAndYearKey: string): Observable<AttendanceRow[]> {
+    return this.http.get<AttendanceRow[]>(`${this.baseUrl}/my-attendance/${monthAndYearKey}`, this.opts).pipe((catchError(err => {
+        console.error(`[getCurrentMonthFullView from Attendance-page.service]: Error in fetching the user's month data from the backend`);
+        throw new Error(`Attendance-page.service: ${err.message}`);
+    })));
+  }
+
 
   clockIn(): Observable<AttendanceMonth> {
     return this.http.post<AttendanceMonth>(`${this.baseUrl}/clock-in`, {}, this.opts);

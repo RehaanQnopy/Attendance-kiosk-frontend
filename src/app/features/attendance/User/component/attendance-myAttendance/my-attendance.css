@@ -52,3 +52,7 @@
 .status.short-day { background: #f6e9e9; color: #a24b4b; }
 .status.leave { background: #e3eefb; color: #2f5f9e; }
 .status.in-progress { background: #fbf2e0; color: #8a5f0f; }
+.status.absent { background: #f6e9e9; color: #a24b4b; }
+.status.weekend { background: #f0f0f0; color: #666666; }
+.status.holiday { background: #ede7f6; color: #5e35b1; }
+.status.other { background: #f0f0f0; color: #666666; }
