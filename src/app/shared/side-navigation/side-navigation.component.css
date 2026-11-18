@@ -1,127 +1,244 @@
+/* ------------------------------------------------------------------
+   Sidebar styled after the Astrea System reference:
+   - soft grey-white panel, no heavy borders
+   - quiet grey icons + labels
+   - active item: pale indigo pill with a slim accent bar on the left
+   - hover: gentle tint, icon/label darken, tiny nudge
+   ------------------------------------------------------------------ */
+
 :host {
-  /* ...keep the variables... */
-  display: flex;
+  /* Design tokens (override from a parent if you already have theme vars) */
+  --nav-bg: #ffffff;
+  --nav-line: #ebebf0;
+  --nav-text: #6b6b7b;
+  --nav-text-strong: #1c1c28;
+  --nav-accent: #4338ca;          /* indigo accent bar + active text */
+  --nav-active-bg: #e9e8f9;       /* pale lavender pill */
+  --nav-hover-bg: #efeff4;
+
+  /* The host owns the white background + border, so the white column
+     runs all the way to the bottom of the page, however long it is. */
+  display: block;
   flex: none;
-  align-self: flex-start;
-  height: calc(100vh - var(--header-h, 58px));   /* replaces min-height */
+  align-self: stretch;
+  width: 240px;
+  min-height: 100vh;
+  background: var(--nav-bg);
+  border-right: 1px solid var(--nav-line);
   font-family: Roboto, "Helvetica Neue", Arial, sans-serif;
 }
 
-/* .side-nav {
-  width: 232px;
-  flex: 1;
-  background: #fff;
-  border-right: 1px solid var(--line);
-  padding: 20px 14px;
+/* The inner nav stays pinned to the viewport while the page scrolls,
+   so the Leave button always sits at the very bottom of the screen. */
+.side-nav {
+  position: sticky;
+  top: 0;
+  width: 100%;
+  height: 100vh;
+  overflow-y: auto;
+  box-sizing: border-box;
+  padding: 20px 14px 20px;
+
   display: flex;
   flex-direction: column;
-  gap: 6px;
-} */
- .side-nav { min-height: 0; overflow-y: auto; }
-
-.portal-label {
-  padding: 4px 12px 14px;
-  margin-bottom: 8px;
-  border-bottom: 1px solid var(--line);
-  color: var(--muted);
-  font-size: 12px;
-  font-weight: 500;
-  letter-spacing: .04em;
-  text-transform: uppercase;
+  gap: 0;
 }
 
-.side-nav__menu { display: flex; flex-direction: column; gap: 6px; }
+/* Brand */
+.sidebar-brand {
+  padding: 0 8px 4px;
+}
 
+.logo-link {
+  display: inline-flex;
+  align-items: center;
+}
+
+.logo {
+  display: block;
+  height: 56px;
+  width: auto;
+  max-width: 100%;
+  object-fit: contain;
+}
+
+/* Section label ("Main" in the reference) – small, muted, no divider */
+.portal-label {
+  margin: 28px 0 10px;
+  padding: 0 12px;
+
+  color: #a0a0ae;
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: .04em;
+}
+
+/* Navigation group */
+.side-nav__menu {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+/* Nav buttons  (the original had `nav-item {` without the dot, so none of
+   these base styles were being applied) */
 .nav-item {
+  position: relative;
   display: flex;
   align-items: center;
   gap: 12px;
+
   width: 100%;
-  padding: 11px 12px;
+  min-height: 44px;
+  box-sizing: border-box;
+  padding: 10px 12px;
+
   border: 0;
-  border-radius: 12px;
+  border-radius: 10px;
   background: transparent;
-  color: var(--muted);
+  color: var(--nav-text);
+
   font: inherit;
-  font-size: 15px;
+  font-size: 14px;
   font-weight: 500;
   text-align: left;
   cursor: pointer;
+
+  transition:
+    background-color .18s ease,
+    color .18s ease,
+    transform .18s ease;
 }
 
 .nav-item svg {
   width: 20px;
   height: 20px;
   flex: none;
+
   fill: none;
   stroke: currentColor;
-  stroke-width: 1.8;
+  stroke-width: 1.7;
   stroke-linecap: round;
   stroke-linejoin: round;
+
+  transition: transform .18s ease;
 }
 
-.nav-item:hover { background: var(--page); }
-.nav-item.active { background: #e1f1f2; color: var(--teal-deep); }
-.nav-item:focus-visible { outline: 3px solid var(--teal); outline-offset: 2px; }
+/* Hover */
+.nav-item:not(.active):hover {
+  background: var(--nav-hover-bg);
+  color: var(--nav-text-strong);
+}
 
-.badge {
-  margin-left: auto;
-  min-width: 22px;
-  height: 22px;
-  padding: 0 7px;
-  border-radius: 11px;
-  background: var(--rose);
-  color: #fff;
-  font-size: 12px;
+.nav-item:not(.active):hover svg {
+  transform: scale(1.08);
+}
+
+.nav-item:not(.active):active {
+  transform: scale(.98);
+}
+
+/* Active page: lavender pill + slim accent bar */
+.nav-item.active {
+  background: var(--nav-active-bg);
+  color: var(--nav-text-strong);
   font-weight: 600;
-  display: grid;
-  place-items: center;
 }
 
-.side-nav__slot:empty { display: none; }
-.side-nav__slot { padding: 0 4px; }
+.nav-item.active svg {
+  color: var(--nav-accent);
+}
 
-/* ===== NEW: Employee dropdown ===== */
+.nav-item.active::before {
+  content: "";
+  position: absolute;
+  left: -14px;                 /* sits on the sidebar's inner edge */
+  top: 8px;
+  bottom: 8px;
+  width: 3px;
+  border-radius: 0 3px 3px 0;
+  background: var(--nav-accent);
+}
+
+.nav-item.active:hover {
+  background: #e1e0f6;
+}
+
+/* Keyboard focus */
+.nav-item:focus-visible {
+  outline: 2px solid var(--nav-accent);
+  outline-offset: 2px;
+}
+
+/* Employee submenu */
 .nav-item--parent .chevron {
   margin-left: auto;
-  width: 18px;
-  height: 18px;
+  width: 16px;
+  height: 16px;
   transition: transform .2s ease;
 }
-.nav-item--parent.open .chevron { transform: rotate(180deg); }
+
+.nav-item--parent.open {
+  color: var(--nav-text-strong);
+}
+
+.nav-item--parent.open .chevron {
+  transform: rotate(180deg);
+}
 
 .submenu {
   display: flex;
   flex-direction: column;
   gap: 4px;
-  margin-left: 20px;
+  margin: 0 0 4px 22px;
   padding-left: 12px;
-  border-left: 1px solid var(--line);
+  border-left: 1px solid var(--nav-line);
 }
-.nav-item--sub { padding: 9px 12px; font-size: 14px; }
 
-/* ===== NEW: Leave pinned at the bottom ===== */
+.nav-item--sub {
+  min-height: 40px;
+  padding-left: 14px;
+  font-size: 13.5px;
+}
+
+/* Sub-item hover nudges slightly right */
+.nav-item--sub:not(.active):hover {
+  transform: translateX(3px);
+}
+
+/* Accent bar for sub-item sits on the submenu's guide line instead */
+.nav-item--sub.active::before {
+  left: -13px;
+  top: 6px;
+  bottom: 6px;
+}
+
+/* Dynamic content slots */
+.side-nav__slot:empty {
+  display: none;
+}
+
+.side-nav__slot {
+  padding: 4px;
+}
+
+/* Bottom navigation */
 .side-nav__footer {
   margin-top: auto;
-  padding-top: 10px;
-  border-top: 1px solid var(--line);
+  padding-top: 14px;
+  border-top: 1px solid var(--nav-line);
 }
 
-@media (max-width: auto) {
-  :host { display: block; align-self: auto; min-height: 0; }
-  .side-nav {
-    width: auto;
-    flex-direction: row;
-    align-items: center;
-    padding: 10px 12px;
-    border-right: 0;
-    border-bottom: 1px solid var(--line);
-    overflow-x: auto;
+@media (prefers-reduced-motion: reduce) {
+  .nav-item,
+  .nav-item svg,
+  .nav-item--parent .chevron {
+    transition: none;
   }
-  .portal-label { display: none; }
-  .side-nav__menu { flex-direction: row; }
-  .nav-item { width: auto; white-space: nowrap; }
-  .side-nav__slot { display: none; }
-  .submenu { display: none; }
-  .side-nav__footer { margin-top: 0; padding-top: 0; border-top: 0; }
+
+  .nav-item:not(.active):hover svg,
+  .nav-item--sub:not(.active):hover,
+  .nav-item:not(.active):active {
+    transform: none;
+  }
 }

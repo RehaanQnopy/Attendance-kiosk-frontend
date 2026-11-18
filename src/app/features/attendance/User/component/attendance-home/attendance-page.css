@@ -14,21 +14,91 @@
   color: var(--ink);
 }
 
-/* ---------- layout ---------- */
-.dash { display: grid; grid-template-columns: minmax(0, 1fr) 340px; gap: 24px; align-items: start; padding: 24px; }
-.main { display: grid; gap: 20px; min-width: 0; }
-.side { display: grid; gap: 20px; position: sticky; top: 16px; }
-.trio { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 20px; }
+/* ---------- page layout ---------- */
+
+.attendance-page {
+  width: 100%;
+  box-sizing: border-box;
+  padding: 24px;
+}
+
+/* Welcome section gets its own full-width row */
+
+.greet {
+  width: 100%;
+  margin-bottom: 20px;
+}
+
+.greet h1 {
+  margin: 0;
+  font-size: 24px;
+  font-weight: 600;
+}
+
+.greet p {
+  margin: 4px 0 0;
+  color: var(--muted);
+  font-size: 14px;
+}
+
+/* Dashboard starts BELOW the welcome section */
+
+.dash {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 340px;
+  gap: 24px;
+  align-items: start;
+  padding: 0;
+}
+
+.main {
+  display: grid;
+  gap: 20px;
+  min-width: 0;
+}
+
+.side {
+  display: grid;
+  gap: 20px;
+  position: sticky;
+  top: 16px;
+}
+
+.trio {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 20px;
+}
 
 @media (max-width: 1299px) {
-  .dash { grid-template-columns: 1fr; }
-  .side { order: -1; position: static; grid-template-columns: 1fr 1fr; }
-  .side .clock { grid-column: 1 / -1; }
-  .trio { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .dash {
+    grid-template-columns: 1fr;
+  }
+
+  .side {
+    order: -1;
+    position: static;
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .side .clock {
+    grid-column: 1 / -1;
+  }
+
+  .trio {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
 }
+
 @media (max-width: 800px) {
-  .dash { padding: 16px; gap: 16px; }
-  .side, .trio { grid-template-columns: 1fr; }
+  .attendance-page {
+    padding: 16px;
+  }
+
+  .side,
+  .trio {
+    grid-template-columns: 1fr;
+  }
 }
 
 /* ---------- greeting ---------- */

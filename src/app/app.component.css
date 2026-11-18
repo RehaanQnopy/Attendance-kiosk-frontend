@@ -1,6 +1,7 @@
-:host { display: block; }
+:host {
+  display: block;
+}
 
-/* column: header on top, body grows to fill the screen, footer at the bottom */
 .app-shell {
   display: flex;
   flex-direction: column;
@@ -9,15 +10,18 @@
 }
 
 .app-body {
-  flex: 1;                 /* this is what pushes the footer down */
+  flex: 1;
   display: flex;
   align-items: stretch;
   padding: 0;
   gap: 0;
-  min-height: 0;
+  min-height: 100vh;
 }
 
-.app-nav { flex: none; align-self: stretch; }
+.app-nav {
+  flex: 0 0 232px;
+  align-self: stretch;
+}
 
 .app-content {
   flex: 1 1 auto;
@@ -26,6 +30,11 @@
 }
 
 @media (max-width: 800px) {
-  .app-body { flex-direction: column; }
-  .app-nav { align-self: auto; }
+  .app-body {
+    flex-direction: column;
+  }
+
+  .app-nav {
+    flex: none;
+  }
 }

@@ -1,15 +1,21 @@
-<div class="dash">
+<div class="attendance-page">
 
-  <!-- ================= MAIN AREA ================= -->
-  <div class="main">
+  <!-- FULL-WIDTH WELCOME SECTION -->
+  <header class="greet">
+    <h1>Welcome back, {{ auth.currUser?.name }}</h1>
+    <p>Here is your attendance for {{ monthLabel }}.</p>
+  </header>
 
-    <header class="greet">
-      <h1>Welcome back, {{ auth.currUser?.name }}</h1>
-      <p>Here is your attendance for {{ monthLabel }}.</p>
-    </header>
+  <!-- DASHBOARD CONTENT -->
+  <div class="dash">
 
-    <!-- ---------- summary stats ---------- -->
-    <section class="stat-row" aria-label="Attendance summary">
+    <!-- ================= MAIN AREA ================= -->
+    <div class="main">
+
+      <!-- REMOVE THE OLD greet HEADER FROM HERE -->
+
+      <!-- ---------- summary stats ---------- -->
+      <section class="stat-row" aria-label="Attendance summary">
 
       <article class="stat">
         <span class="stat__icon ic-green">

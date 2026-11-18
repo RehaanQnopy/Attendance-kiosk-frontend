@@ -8,10 +8,20 @@
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
 }
 
-.spacer { flex: 1 1 auto; }
+/* Move Profile to the left */
+.profile-btn { /* <-- Replace with your actual Profile element class */
+  order: 1;
+}
 
-/* Logo with shine sweep */
+/* Keep the spacer in the middle */
+.spacer {
+  flex: 1 1 auto;
+  order: 2;
+}
+
+/* Move Logo to the far right */
 .logo-link {
+  order: 3;
   position: relative;
   display: inline-block;
   overflow: hidden;
@@ -23,6 +33,7 @@
   display: block;
 }
 
+/* Shine sweep with a long pause (runs once every 20 seconds) */
 .logo-link::after {
   content: '';
   position: absolute;
@@ -37,16 +48,18 @@
     transparent 100%
   );
   transform: skewX(-20deg);
-  animation: shine 4s ease-in-out infinite;
+  animation: shine 20s ease-in-out infinite;
 }
 
+/* Waits idle for 92% of the cycle (~18.4s), then sweeps across in ~1.6s */
 @keyframes shine {
-  0%, 60% { left: -75%; }
+  0%, 92% { left: -75%; }
   100%    { left: 125%; }
 }
 
+
 /* Profile button */
-.profile-btn {
+/* .profile-btn {
   display: inline-flex;
   align-items: center;
   gap: 8px;
@@ -59,27 +72,27 @@
   border-radius: 6px;
   cursor: pointer;
   transition: background-color 0.25s, color 0.25s, transform 0.2s, box-shadow 0.2s;
-}
+} */
 
-.profile-icon {
+/* .profile-icon {
   width: 20px;
   height: 20px;
   fill: currentColor;
-}
+} */
 
-.profile-btn:hover {
+/* .profile-btn:hover {
   background: var(--brand-teal);
   color: #ffffff;
   transform: translateY(-1px);
   box-shadow: 0 4px 10px rgba(0, 131, 143, 0.3);
-}
+} */
 
-.profile-btn:active { transform: translateY(0); }
+/* .profile-btn:active { transform: translateY(0); }
 
 .profile-btn:focus-visible {
   outline: 2px solid var(--brand-teal-light);
   outline-offset: 2px;
-}
+} */
 
 /* Flowing teal line under the header */
 .app-header::after {
