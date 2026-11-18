@@ -1,7 +1,9 @@
 import { HttpClient } from "@angular/common/http";
 import { Injectable } from "@angular/core";
-import { catchError, Observable } from "rxjs";
+import { catchError, map, Observable } from "rxjs";
+import { ApiResponse } from "src/app/core/apiResponse";
 import { environment } from "src/environments/environment";
+import { AttendanceRow } from "../model/AttendanceRow";
 import { UsersAttendanceView } from "../model/UsersAttendanceView";
 
 
@@ -25,4 +27,14 @@ export class ManagerService {
         }))
     }
 
-}
+    public getCurrentMonthFullView(monthAndYearKey: string): Observable<AttendanceRow[]> 
+    {
+          return this.http.get<ApiResponse<AttendanceRow[]>>(`${this.baseUrl}/manager/my-attendance/${monthAndYearKey}`, this.opts).pipe(
+            map(res => res.data),
+            catchError(err => {
+             // the backend's error body has the same shape, so its message can be reused
+            throw new Error(err.error?.message ?? err.message);
+        }))
+    }
+
+};

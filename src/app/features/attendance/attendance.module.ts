@@ -8,6 +8,9 @@ import { MyAttendanceComponent } from './User/component/attendance-myAttendance/
 
 @NgModule({
   declarations: [AttendancePageComponent, MyAttendanceComponent],
-  imports: [CommonModule, CalendarModule, AttendanceRoutingModule]
+  imports: [CommonModule, CalendarModule, AttendanceRoutingModule],
+  //Very important learning, you declare all those components as exports, all the ones which are to be used
+  //by another modules 
+  exports: [MyAttendanceComponent]
 })
 export class AttendanceModule {}

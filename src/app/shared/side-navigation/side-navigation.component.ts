@@ -18,7 +18,14 @@ export class SideNavigationComponent {
 
     MyAttendance() {
         this.active='attendance';
-        this.route.navigate(['/attendance/myAttendance'])
+        if(this.route.url.includes('/manager'))
+        {
+            this.route.navigate(['/manager/my-attendance'])
+        }
+        else 
+        {
+            this.route.navigate(['/attendance/myAttendance'])
+        }
     };
     LogOut() {
         this.active='leave';
